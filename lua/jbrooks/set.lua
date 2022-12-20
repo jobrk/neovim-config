@@ -15,3 +15,7 @@ vim.opt.termguicolors = true
 vim.opt.wrap = false
 vim.opt.swapfile = false
 vim.opt.signcolumn = "yes"
+vim.opt.backup = false
+vim.opt.writebackup = false
+vim.opt.updatetime = 300
+vim.opt.guicursor = ""

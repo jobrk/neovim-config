@@ -1,26 +1,26 @@
-local lsp = require('lsp-zero')
+-- local lsp = require('lsp-zero')
 
-lsp.preset('recommended')
+-- lsp.preset('recommended')
 
-lsp.ensure_installed({
-  'tsserver',
-  'eslint',
-  'sumneko_lua',
-  'rust_analyzer',
-})
+-- lsp.ensure_installed({
+--   'tsserver',
+--   'eslint',
+--   'sumneko_lua',
+--   'rust_analyzer',
+-- })
 
-lsp.configure('sumneko_lua', {
-  settings = {
-    Lua = {
-      diagnostics = {
-        globals = { 'vim' }
-      }
-    }
-  }
-})
+-- lsp.configure('sumneko_lua', {
+--   settings = {
+--     Lua = {
+--       diagnostics = {
+--         globals = { 'vim' }
+--       }
+--     }
+--   }
+-- })
 
-lsp.setup()
+-- lsp.setup()
 
-vim.diagnostic.config({
-  virtual_text = true,
-})
+-- vim.diagnostic.config({
+--   virtual_text = true,
+-- })
