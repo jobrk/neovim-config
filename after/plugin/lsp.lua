@@ -1,26 +1,31 @@
--- local lsp = require('lsp-zero')
+require("neodev").setup({})
 
--- lsp.preset('recommended')
+local lsp = require('lsp-zero')
 
--- lsp.ensure_installed({
---   'tsserver',
---   'eslint',
---   'sumneko_lua',
---   'rust_analyzer',
--- })
+lsp.preset('recommended')
 
--- lsp.configure('sumneko_lua', {
---   settings = {
---     Lua = {
---       diagnostics = {
---         globals = { 'vim' }
---       }
---     }
---   }
--- })
+lsp.ensure_installed({
+  'tsserver',
+  'eslint',
+  'sumneko_lua',
+  'rust_analyzer',
+})
 
--- lsp.setup()
+lsp.configure('sumneko_lua', {
+  settings = {
+    Lua = {
+      diagnostics = {
+        globals = { 'vim' }
+      },
+      workspace = {
+        checkThirdParty = false,
+      },
+    }
+  }
+})
 
--- vim.diagnostic.config({
---   virtual_text = true,
--- })
+lsp.setup()
+
+vim.diagnostic.config({
+  virtual_text = true,
+})
