@@ -1,16 +1,15 @@
 {
-  "coc.preferences.formatOnSaveFiletypes": [
-    "html",
-    "javascript",
-    "javascriptreact",
-    "json",
-    "lua",
-    "rust",
-    "typescript",
-    "typescriptreact"
-  ],
+  "coc.preferences.formatOnSave": true,
   "diagnostic.virtualText": true,
   "diagnostic.virtualTextCurrentLineOnly": false,
+  "languageserver": {
+    "csharp-ls": {
+      "command": "csharp-ls",
+      "filetypes": ["cs"],
+      "rootPatterns": ["*.csproj", ".vim/", ".git/", ".hg/"]
+    }
+  },
+  "dotnet.dotnetPath": "~/.local/dotnet/dotnet",
   "prettier.htmlWhitespaceSensitivity": "css",
   "prettier.insertPragma": false,
   "prettier.jsxBracketSameLine": false,
@@ -28,5 +27,15 @@
   "prettier.arrowParens": "avoid",
   "prettier.bracketSpacing": false,
   "prettier.endOfLine": "lf",
-  "Lua.telemetry.enable": false
+  "Lua.telemetry.enable": false,
+  "[cs]": {
+    "prettier.endOfLine": "crlf"
+  },
+  "[markdown]": {
+    "coc.preferences.formatOnSave": false
+  },
+  "[yaml]": {
+    "coc.preferences.formatOnSave": false
+  },
+  "snippets.ultisnips.pythonPrompt": false
 }
