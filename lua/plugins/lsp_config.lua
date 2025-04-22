@@ -74,7 +74,7 @@ return {
 
     local servers = {
       -- clangd = {},
-      csharp_ls = {},
+      -- csharp_ls = {},
       gopls = {},
       pyright = {},
       rust_analyzer = {},
