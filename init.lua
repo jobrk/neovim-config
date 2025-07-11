@@ -27,7 +27,7 @@ vim.opt.hidden = true
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
-vim.diagnostic.config({virtual_text = true})
+vim.diagnostic.config { virtual_text = true }
 
 -- [[ Basic Keymaps ]]
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
@@ -113,6 +113,7 @@ require('lazy').setup({
   require 'plugins.tmux_navigator',
   require 'plugins.visual_multi',
   require 'plugins.ufo',
+  require 'plugins.harpoon',
 }, {
   ui = {
     icons = vim.g.have_nerd_font and {} or {
