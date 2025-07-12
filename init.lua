@@ -35,21 +35,6 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 vim.keymap.set('n', '<leader>lr', '<cmd>LspRestart<CR>', { desc = '[L]SP [R]estart' })
 
--- vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
--- vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
--- vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
--- vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
-
--- Temporary to get used to
-vim.keymap.set('n', '<C-w><C-h>', '<cmd>echo "Use <C-h> to move!!"<CR>')
-vim.keymap.set('n', '<C-w><C-l>', '<cmd>echo "Use <C-l> to move!!"<CR>')
-vim.keymap.set('n', '<C-w><C-j>', '<cmd>echo "Use <C-j> to move!!"<CR>')
-vim.keymap.set('n', '<C-w><C-k>', '<cmd>echo "Use <C-k> to move!!"<CR>')
-vim.keymap.set('n', '<C-w>h', '<cmd>echo "Use <C-h> to move!!"<CR>')
-vim.keymap.set('n', '<C-w>l', '<cmd>echo "Use <C-l> to move!!"<CR>')
-vim.keymap.set('n', '<C-w>j', '<cmd>echo "Use <C-j> to move!!"<CR>')
-vim.keymap.set('n', '<C-w>k', '<cmd>echo "Use <C-k> to move!!"<CR>')
-
 vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv", { silent = true })
 vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv", { silent = true })
 
@@ -89,31 +74,26 @@ vim.opt.rtp:prepend(lazypath)
 -- [[ Configure and install plugins ]]
 require('lazy').setup({
 
-  require 'plugins.vim_sleuth',
-  require 'plugins.which_key',
-  require 'plugins.telescope',
-  require 'plugins.lazydev',
-  require 'plugins.luvit_meta',
-  require 'plugins.lsp_config',
-  -- require 'plugins.typescript',
-  require 'plugins.conform',
-  require 'plugins.cmp',
+  require 'plugins.autopairs',
   require 'plugins.catppuccin',
-  require 'plugins.todo_comments',
+  require 'plugins.cmp',
+  require 'plugins.conform',
+  require 'plugins.gitsigns',
+  require 'plugins.harpoon',
+  require 'plugins.lazydev',
+  require 'plugins.lsp_config',
   require 'plugins.lualine',
   require 'plugins.mini',
-  require 'plugins.treesitter',
-  require 'plugins.zen_mode',
-  -- require 'plugins.debug',
-  -- require 'plugins.indent_line',
-  require 'plugins.lint',
-  require 'plugins.autopairs',
   require 'plugins.neo-tree',
-  require 'plugins.gitsigns',
+  require 'plugins.telescope',
   require 'plugins.tmux_navigator',
-  require 'plugins.visual_multi',
+  require 'plugins.todo_comments',
+  require 'plugins.treesitter',
   require 'plugins.ufo',
-  require 'plugins.harpoon',
+  require 'plugins.vim_sleuth',
+  require 'plugins.visual_multi',
+  require 'plugins.which_key',
+  require 'plugins.zen_mode',
 }, {
   ui = {
     icons = vim.g.have_nerd_font and {} or {
