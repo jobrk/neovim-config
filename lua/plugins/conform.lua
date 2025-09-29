@@ -11,6 +11,11 @@ return { -- Autoformat
       mode = '',
       desc = '[F]ormat buffer',
     },
+    {
+      '<leader>w',
+      function() vim.cmd('noautocmd w') end,
+      desc = 'Save without formatting',
+    }
   },
   opts = {
     notify_on_error = false,

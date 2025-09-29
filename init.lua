@@ -89,11 +89,12 @@ require('lazy').setup({
   require 'plugins.tmux_navigator',
   require 'plugins.todo_comments',
   require 'plugins.treesitter',
-  require 'plugins.ufo',
   require 'plugins.vim_sleuth',
   require 'plugins.visual_multi',
   require 'plugins.which_key',
   require 'plugins.zen_mode',
+  require 'plugins.csharpls_extended',
+  require 'plugins.dadbod',
 }, {
   ui = {
     icons = vim.g.have_nerd_font and {} or {
