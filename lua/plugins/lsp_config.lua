@@ -28,6 +28,10 @@ return {
 
         map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
 
+        map('K', function()
+          vim.lsp.buf.hover { border = 'single' }
+        end, 'Hover')
+
         local client = vim.lsp.get_client_by_id(event.data.client_id)
         if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
           local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
@@ -58,14 +62,14 @@ return {
           end, '[T]oggle Inlay [H]ints')
         end
 
-        local diagnostic_augroup = vim.api.nvim_create_augroup('diagnostic-lsp', { clear = true })
-        vim.api.nvim_create_autocmd('CursorHold', {
-          buffer = event.buf,
-          group = diagnostic_augroup,
-          callback = function()
-            vim.diagnostic.open_float { border = 'rounded', focusable = false }
-          end,
-        })
+        -- local diagnostic_augroup = vim.api.nvim_create_augroup('diagnostic-lsp', { clear = true })
+        -- vim.api.nvim_create_autocmd('CursorHold', {
+        --   buffer = event.buf,
+        --   group = diagnostic_augroup,
+        --   callback = function()
+        --     vim.diagnostic.open_float { border = 'rounded', focusable = false }
+        --   end,
+        -- })
       end,
     })
 
@@ -80,7 +84,7 @@ return {
       rust_analyzer = {},
       prettier = {},
       ['eslint-lsp'] = {},
-      vtsls = {},
+      -- vtsls = {},
       -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
 
       lua_ls = {

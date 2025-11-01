@@ -27,7 +27,7 @@ vim.opt.hidden = true
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
-vim.diagnostic.config { virtual_text = true }
+vim.diagnostic.config { virtual_text = true, float = { border = 'single' } }
 
 -- [[ Basic Keymaps ]]
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
@@ -89,7 +89,6 @@ require('lazy').setup({
   require 'plugins.tmux_navigator',
   require 'plugins.todo_comments',
   require 'plugins.treesitter',
-  require 'plugins.ufo',
   require 'plugins.vim_sleuth',
   require 'plugins.visual_multi',
   require 'plugins.which_key',
