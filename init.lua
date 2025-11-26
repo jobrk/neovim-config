@@ -85,6 +85,7 @@ require('lazy').setup({
   require 'plugins.lualine',
   require 'plugins.mini',
   require 'plugins.neo-tree',
+  require 'plugins.noice',
   require 'plugins.telescope',
   require 'plugins.tmux_navigator',
   require 'plugins.todo_comments',
