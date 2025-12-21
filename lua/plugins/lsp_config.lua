@@ -84,6 +84,8 @@ return {
       rust_analyzer = {},
       prettier = {},
       ['eslint-lsp'] = {},
+      roslyn = {},
+      netcoredbg = {},
       -- vtsls = {},
       -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
 
@@ -98,7 +100,12 @@ return {
       },
     }
 
-    require('mason').setup()
+    require('mason').setup {
+      registries = {
+        'github:mason-org/mason-registry',
+        'github:Crashdummyy/mason-registry',
+      },
+    }
 
     local ensure_installed = vim.tbl_keys(servers or {})
     vim.list_extend(ensure_installed, {
@@ -107,6 +114,11 @@ return {
     require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
     require('mason-lspconfig').setup {
+      automatic_enable = {
+        exclude = {
+          'jdtls',
+        },
+      },
       handlers = {
         function(server_name)
           local server = servers[server_name] or {}

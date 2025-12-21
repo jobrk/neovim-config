@@ -27,6 +27,7 @@ vim.opt.hidden = true
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
+vim.opt.shortmess:append 'I'
 vim.diagnostic.config { virtual_text = true, float = { border = 'single' } }
 
 -- [[ Basic Keymaps ]]
@@ -78,14 +79,18 @@ require('lazy').setup({
   require 'plugins.catppuccin',
   require 'plugins.cmp',
   require 'plugins.conform',
+  require 'plugins.debug',
   require 'plugins.gitsigns',
   require 'plugins.harpoon',
+  require 'plugins.jdtls',
   require 'plugins.lazydev',
   require 'plugins.lsp_config',
   require 'plugins.lualine',
   require 'plugins.mini',
   require 'plugins.neo-tree',
+  require 'plugins.neotest',
   require 'plugins.noice',
+  require 'plugins.roslyn',
   require 'plugins.telescope',
   require 'plugins.tmux_navigator',
   require 'plugins.todo_comments',
