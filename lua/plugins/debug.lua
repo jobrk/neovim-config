@@ -4,7 +4,25 @@ return {
   -- NOTE: And you can specify dependencies as well
   dependencies = {
     -- Creates a beautiful debugger UI
-    'rcarriga/nvim-dap-ui',
+    {
+      'rcarriga/nvim-dap-ui',
+      keys = {
+        {
+          '<leader>du',
+          function()
+            require('dapui').toggle()
+          end,
+          desc = 'DAP UI: toggle',
+        },
+        {
+          '<leader>de',
+          function()
+            require('dapui').eval()
+          end,
+          desc = 'DAP UI: eval expression',
+        },
+      },
+    },
 
     -- Required dependency for nvim-dap-ui
     'nvim-neotest/nvim-nio',
@@ -17,56 +35,94 @@ return {
     'leoluz/nvim-dap-go',
   },
   keys = {
-    -- Basic debugging keymaps, feel free to change to your liking!
     {
-      '<F5>',
+      '<leader>dc',
       function()
         require('dap').continue()
       end,
-      desc = 'Debug: Start/Continue',
+      desc = 'DAP: continue',
     },
     {
-      '<F1>',
+      '<leader>dr',
       function()
-        require('dap').step_into()
+        require('dap').restart()
       end,
-      desc = 'Debug: Step Into',
+      desc = 'DAP: restart',
     },
     {
-      '<F2>',
+      '<leader>dq',
       function()
-        require('dap').step_over()
+        require('dap').terminate()
       end,
-      desc = 'Debug: Step Over',
+      desc = 'DAP: quit',
     },
+
     {
-      '<F3>',
-      function()
-        require('dap').step_out()
-      end,
-      desc = 'Debug: Step Out',
-    },
-    {
-      '<leader>b',
+      '<leader>db',
       function()
         require('dap').toggle_breakpoint()
       end,
-      desc = 'Debug: Toggle Breakpoint',
+      desc = 'DAP: toggle breakpoint',
     },
     {
-      '<leader>B',
+      '<leader>dB',
       function()
         require('dap').set_breakpoint(vim.fn.input 'Breakpoint condition: ')
       end,
-      desc = 'Debug: Set Breakpoint',
+      desc = 'DAP: conditional breakpoint',
     },
-    -- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
+
     {
-      '<F7>',
+      '<leader>dn',
       function()
-        require('dapui').toggle()
+        require('dap').step_over()
       end,
-      desc = 'Debug: See last session result.',
+      desc = 'DAP: step over',
+    },
+    {
+      '<leader>di',
+      function()
+        require('dap').step_into()
+      end,
+      desc = 'DAP: step into',
+    },
+    {
+      '<leader>do',
+      function()
+        require('dap').step_out()
+      end,
+      desc = 'DAP: step out',
+    },
+
+    {
+      '<leader>dk',
+      function()
+        require('dap').up()
+      end,
+      desc = 'DAP: stack up',
+    },
+    {
+      '<leader>dj',
+      function()
+        require('dap').down()
+      end,
+      desc = 'DAP: stack down',
+    },
+
+    {
+      '<leader>dh',
+      function()
+        require('dap.ui.widgets').hover()
+      end,
+      desc = 'DAP: hover',
+      mode = { 'n', 'v' },
+    },
+    {
+      '<leader>dp',
+      function()
+        require('dap.ui.widgets').preview()
+      end,
+      desc = 'DAP: preview',
     },
   },
   config = function()
@@ -85,18 +141,9 @@ return {
     dap.adapters.coreclr = netcoredbg_adapter -- needed for unit test debugging
 
     require('mason-nvim-dap').setup {
-      -- Makes a best effort to setup the various debuggers with
-      -- reasonable debug configurations
       automatic_installation = true,
-
-      -- You can provide additional configuration to the handlers,
-      -- see mason-nvim-dap README for more information
       handlers = {},
-
-      -- You'll need to check that you have the required things installed
-      -- online, please don't ask me how to install them :)
       ensure_installed = {
-        -- Update this to ensure that you have the debuggers for the langs you want
         'delve',
       },
     }
@@ -132,27 +179,6 @@ return {
           -- return vim.fn.input("Path to dll: ", vim.fn.getcwd() .. "/src/", "file")
           return vim.fn.input('Path to dll: ', vim.fn.getcwd() .. '/bin/Debug/net9.0/', 'file')
         end,
-
-        -- justMyCode = false,
-        -- stopAtEntry = false,
-        -- -- program = function()
-        -- --   -- todo: request input from ui
-        -- --   return "/path/to/your.dll"
-        -- -- end,
-        -- env = {
-        --   ASPNETCORE_ENVIRONMENT = function()
-        --     -- todo: request input from ui
-        --     return "Development"
-        --   end,
-        --   ASPNETCORE_URLS = function()
-        --     -- todo: request input from ui
-        --     return "http://localhost:5050"
-        --   end,
-        -- },
-        -- cwd = function()
-        --   -- todo: request input from ui
-        --   return vim.fn.getcwd()
-        -- end,
       },
     }
 
