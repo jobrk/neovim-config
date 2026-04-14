@@ -33,6 +33,16 @@ return {
 
     -- Add your own debuggers here
     'leoluz/nvim-dap-go',
+
+    {
+        "theHamsta/nvim-dap-virtual-text",
+        lazy = true,
+        config = function()
+            require"nvim-dap-virtual-text".setup{
+                commented = true,
+            }
+        end
+    }
   },
   keys = {
     {
@@ -129,11 +139,9 @@ return {
     local dap = require 'dap'
     local dapui = require 'dapui'
 
-    local mason_path = vim.fn.stdpath 'data' .. '/mason/packages/netcoredbg/netcoredbg'
-
     local netcoredbg_adapter = {
       type = 'executable',
-      command = mason_path,
+      command = 'netcoredbg',
       args = { '--interpreter=vscode' },
     }
 
@@ -141,7 +149,7 @@ return {
     dap.adapters.coreclr = netcoredbg_adapter -- needed for unit test debugging
 
     require('mason-nvim-dap').setup {
-      automatic_installation = true,
+      -- automatic_installation = true,
       handlers = {},
       ensure_installed = {
         'delve',

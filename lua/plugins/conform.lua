@@ -1,3 +1,11 @@
+-- Use oxfmt if the project has it installed, otherwise fall back to prettier.
+local function web_formatter(bufnr)
+  if require('conform').get_formatter_info('oxfmt', bufnr).available then
+    return { 'oxfmt' }
+  end
+  return { 'prettier' }
+end
+
 return { -- Autoformat
   'stevearc/conform.nvim',
   event = { 'BufWritePre' },
@@ -28,13 +36,14 @@ return { -- Autoformat
       }
     end,
     formatters_by_ft = {
-      graphql = { 'prettier' },
-      javascript = { 'prettier' },
-      javascriptreact = { 'prettier' },
-      json = { 'prettier' },
+      graphql = web_formatter,
+      javascript = web_formatter,
+      javascriptreact = web_formatter,
+      json = web_formatter,
+      jsonc = web_formatter,
       lua = { 'stylua' },
-      typescript = { 'prettier' },
-      typescriptreact = { 'prettier' },
+      typescript = web_formatter,
+      typescriptreact = web_formatter,
       -- yaml = { 'prettier' },
     },
   },

@@ -5,7 +5,6 @@ return {
       'Issafalcon/neotest-dotnet',
       'nvim-neotest/neotest-jest',
       'marilari88/neotest-vitest',
-      'rcasia/neotest-java',
     },
   },
   dependencies = {
@@ -18,7 +17,6 @@ return {
     },
     'nvim-neotest/neotest-jest',
     'marilari88/neotest-vitest',
-    'rcasia/neotest-java',
   },
   keys = {
     {
@@ -84,7 +82,6 @@ return {
         require 'neotest-dotnet',
         require 'neotest-jest',
         require 'neotest-vitest',
-        require 'neotest-java',
       },
     }
   end,
