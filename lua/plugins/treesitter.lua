@@ -28,21 +28,31 @@ return { -- Highlight, edit, and navigate code
     vim.api.nvim_create_autocmd('FileType', {
       group = vim.api.nvim_create_augroup('kickstart-treesitter', { clear = true }),
       callback = function(ev)
-        local lang = vim.treesitter.language.get_lang(ev.match) or ev.match
-        if lang and not pcall(vim.treesitter.language.inspect, lang) then
+        local lang = vim.treesitter.language.get_lang(ev.match)
+        if not lang then
+          return
+        end
+
+        if not pcall(vim.treesitter.language.inspect, lang) then
           -- Parser missing: install async, then enable once ready
           pcall(function()
             require('nvim-treesitter').install { lang }
           end)
           local bufnr = ev.buf
           local timer = vim.uv.new_timer()
+          local closed = false
           timer:start(500, 500, vim.schedule_wrap(function()
+            if closed then
+              return
+            end
             if not vim.api.nvim_buf_is_valid(bufnr) then
+              closed = true
               timer:stop()
               timer:close()
               return
             end
             if pcall(vim.treesitter.language.inspect, lang) then
+              closed = true
               timer:stop()
               timer:close()
               enable_treesitter(bufnr)
