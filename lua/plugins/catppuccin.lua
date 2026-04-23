@@ -7,7 +7,8 @@ return {
     flavour = 'macchiato',
     transparent_background = true,
   },
-  init = function()
+  config = function(_, opts)
+    require('catppuccin').setup(opts)
     vim.cmd.colorscheme 'catppuccin'
     vim.cmd.hi 'Comment gui=none'
   end,
