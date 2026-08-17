@@ -1,7 +1,10 @@
-return { -- Useful plugin to show you pending keybinds.
+-- Popup showing pending keybinds as you type
+-- https://github.com/folke/which-key.nvim
+
+return {
   'folke/which-key.nvim',
-  event = 'VimEnter', -- Sets the loading event to 'VimEnter'
-  config = function() -- This is the function that runs, AFTER loading
+  event = 'VimEnter',
+  config = function()
     require('which-key').setup()
 
     -- Document existing key chains
@@ -9,7 +12,7 @@ return { -- Useful plugin to show you pending keybinds.
       { '<leader>c', group = '[C]ode' },
       { '<leader>d', group = '[D]ocument & [D]ebug' },
       { '<leader>r', group = '[R]ename' },
-      { '<leader>s', group = '[S]earch' },
+      { '<leader>s', group = '[S]earch & [S]ession' },
       { '<leader>w', group = '[W]orkspace' },
       { '<leader>t', group = '[T]oggle & [T]ests' },
       { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },

@@ -32,7 +32,8 @@ stylua --check .          # dry-run / CI check
 
 conform.nvim formats on save inside Neovim (5 s timeout). Formatter mapping:
 - Lua: `stylua`
-- JS/TS/JSX/TSX/JSON/JSONC/GraphQL: `prettier`
+- JS/TS/JSX/TSX/JSON/JSONC/GraphQL: `oxfmt` if the project opts in (oxfmt
+  config file or local node_modules install), otherwise `prettier`
 - Other filetypes: LSP fallback (except C/C++ which skip formatting)
 
 ### Linting
@@ -81,10 +82,12 @@ return {
 }
 ```
 
-Three spec shapes are used:
-1. **Table spec** (most common): `return { 'author/plugin', opts = {} }`
-2. **Bare string** (no config needed): `return 'tpope/vim-sleuth'`
-3. **List of specs**: `return { { 'author/plugin', ... } }`
+Every file returns a single table spec: `return { 'author/plugin', opts = {} }`.
+Bare string returns (`return 'author/plugin'`) are NOT valid — the directory
+import in `lazy.setup` requires every module to return a table.
+
+Spec key order: name, `enabled`/`branch`/`version`, `ft`/`event`/`cmd`,
+`build`, `dependencies`, `keys`, `opts`, `config`.
 
 Prefer `opts = {}` (declarative) over `config = function()` (imperative)
 unless the plugin requires procedural setup logic.
@@ -160,11 +163,16 @@ map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
 
 ## Files to Never Commit
 
-Per `.gitignore`: `lazy-lock.json`, `.luarc.json`, `spell/`, `tags`, `test.sh`.
+Per `.gitignore`: `.luarc.json`, `spell/`, `tags`, `test.sh`.
+`lazy-lock.json` IS committed — it pins plugin versions for reproducibility
+(`:Lazy restore` rolls back to it after a bad update).
 
 ## Adding a New Plugin
 
-1. Create `lua/plugins/<plugin_name>.lua` returning a lazy.nvim spec.
-2. Add `require 'plugins.<plugin_name>'` to the `lazy.setup()` call in `init.lua`.
-3. Run `stylua .` to format.
-4. Restart Neovim; lazy.nvim auto-installs on next launch.
+1. Create `lua/plugins/<plugin_name>.lua` returning a lazy.nvim spec (a table,
+   never a bare string — `lazy.setup` imports the whole `plugins/` directory).
+2. Run `stylua .` to format.
+3. Restart Neovim; lazy.nvim auto-installs on next launch.
+
+To disable a plugin, set `enabled = false` in its spec; delete the file once
+it's clearly not coming back.

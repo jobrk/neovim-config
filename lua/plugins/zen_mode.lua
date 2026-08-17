@@ -1,3 +1,6 @@
+-- Distraction-free editing in a centered window
+-- https://github.com/folke/zen-mode.nvim
+
 return {
   'folke/zen-mode.nvim',
   cmd = 'ZenMode',

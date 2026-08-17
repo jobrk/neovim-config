@@ -1,9 +1,28 @@
+-- Treesitter parsers for highlighting and indentation, auto-installed per filetype
+-- https://github.com/nvim-treesitter/nvim-treesitter
+
 -- Parsers to install on plugin install/update (via :Lazy build)
 local parsers = {
-  'bash', 'c', 'css', 'diff', 'html', 'lua', 'luadoc',
-  'javascript', 'json', 'typescript', 'tsx',
-  'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc',
-  'jinja', 'groovy', 'python', 'yaml',
+  'bash',
+  'c',
+  'css',
+  'diff',
+  'html',
+  'lua',
+  'luadoc',
+  'javascript',
+  'json',
+  'typescript',
+  'tsx',
+  'markdown',
+  'markdown_inline',
+  'query',
+  'vim',
+  'vimdoc',
+  'jinja',
+  'groovy',
+  'python',
+  'yaml',
 }
 
 return { -- Highlight, edit, and navigate code
@@ -33,35 +52,27 @@ return { -- Highlight, edit, and navigate code
           return
         end
 
-        if not pcall(vim.treesitter.language.inspect, lang) then
-          -- Parser missing: install async, then enable once ready
-          pcall(function()
-            require('nvim-treesitter').install { lang }
-          end)
-          local bufnr = ev.buf
-          local timer = vim.uv.new_timer()
-          local closed = false
-          timer:start(500, 500, vim.schedule_wrap(function()
-            if closed then
-              return
-            end
-            if not vim.api.nvim_buf_is_valid(bufnr) then
-              closed = true
-              timer:stop()
-              timer:close()
-              return
-            end
-            if pcall(vim.treesitter.language.inspect, lang) then
-              closed = true
-              timer:stop()
-              timer:close()
-              enable_treesitter(bufnr)
-            end
-          end))
+        if pcall(vim.treesitter.language.inspect, lang) then
+          enable_treesitter(ev.buf)
           return
         end
 
-        enable_treesitter(ev.buf)
+        if not vim.tbl_contains(require('nvim-treesitter').get_available(), lang) then
+          return
+        end
+
+        -- Parser missing: install async, then enable once ready
+        local ok, task = pcall(require('nvim-treesitter').install, { lang })
+        if not ok or not task then
+          return
+        end
+        task:await(function(err, installed)
+          if not err and installed then
+            vim.schedule(function()
+              enable_treesitter(ev.buf)
+            end)
+          end
+        end)
       end,
     })
   end,

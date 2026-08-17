@@ -1,63 +1,79 @@
--- [[ Setting options ]]
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
-vim.g.have_nerd_font = true
+-- [[ Options ]]
+vim.g.mapleader = ' ' -- Space as leader key
+vim.g.maplocalleader = ' ' -- Space as local leader too
+vim.g.have_nerd_font = true -- Terminal font has icons
+vim.g.loaded_netrw = 1 -- Disable netrw (neo-tree instead)
+vim.g.loaded_netrwPlugin = 1 -- Disable netrw plugin part
 
-vim.opt.number = true
-vim.opt.relativenumber = true
-vim.opt.mouse = 'a'
-vim.opt.showmode = false
-vim.opt.ignorecase = true
-vim.opt.smartcase = true
-vim.opt.signcolumn = 'yes'
-vim.opt.updatetime = 250
-vim.opt.timeoutlen = 300
-vim.opt.splitright = true
-vim.opt.splitbelow = true
-vim.opt.tabstop = 2
-vim.opt.inccommand = 'split'
-vim.opt.cursorline = true
-vim.opt.scrolloff = 10
-vim.opt.wrap = false
-vim.opt.swapfile = false
-vim.opt.termguicolors = true
-vim.opt.backup = false
-vim.opt.writebackup = false
-vim.opt.hidden = true
-vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
+vim.opt.number = true -- Absolute number on current line
+vim.opt.relativenumber = true -- Relative numbers elsewhere
+vim.opt.signcolumn = 'yes' -- Always show sign column (no shifting)
+vim.opt.cursorline = true -- Highlight current line
+vim.opt.scrolloff = 10 -- Keep 10 lines around cursor
+vim.opt.wrap = false -- No line wrapping
+vim.opt.showmode = false -- Mode already shown by lualine
+vim.opt.winborder = 'single' -- Border for all floating windows
+vim.opt.shortmess:append 'I' -- No intro screen on start
 
-vim.opt.shortmess:append 'I'
-vim.diagnostic.config { virtual_text = true, float = { border = 'single' } }
+vim.opt.mouse = 'a' -- Mouse in all modes
+vim.opt.confirm = true -- Prompt instead of failing :q with changes
+vim.opt.tabstop = 2 -- Tab renders as 2 spaces
+vim.opt.updatetime = 250 -- Faster CursorHold / swap writes
+vim.opt.timeoutlen = 300 -- Wait 300ms for mapped sequences
+vim.opt.spelllang = 'en_us' -- Spell language (spell off by default)
 
--- [[ Basic Keymaps ]]
-vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
+vim.opt.ignorecase = true -- Case-insensitive search...
+vim.opt.smartcase = true -- ...unless query has capitals
+vim.opt.inccommand = 'split' -- Live preview of :substitute
+
+vim.opt.splitright = true -- Vertical splits open right
+vim.opt.splitbelow = true -- Horizontal splits open below
+
+vim.opt.swapfile = false -- No swap files
+vim.opt.backup = false -- No backup files
+vim.opt.writebackup = false -- No backup before overwriting
+vim.opt.undofile = true -- Persistent undo across sessions
+
+vim.opt.foldmethod = 'expr' -- Folds from expression...
+vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()' -- ...computed by treesitter
+vim.opt.foldtext = '' -- Keep syntax highlight on folded line
+vim.opt.foldlevel = 99 -- Open files fully unfolded
+
+vim.diagnostic.config { virtual_text = { current_line = true } } -- Inline diagnostics on cursor line only
+vim.lsp.log.set_level(vim.log.levels.WARN) -- Keep lsp.log small
+
+-- [[ Keymaps ]]
+vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>', { desc = 'Clear search highlight' })
 
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror float' })
+vim.keymap.set('n', '[e', function()
+  vim.diagnostic.jump { count = -1, severity = vim.diagnostic.severity.ERROR }
+end, { desc = 'Previous error' })
+vim.keymap.set('n', ']e', function()
+  vim.diagnostic.jump { count = 1, severity = vim.diagnostic.severity.ERROR }
+end, { desc = 'Next error' })
 vim.keymap.set('n', '<leader>lr', '<cmd>LspRestart<CR>', { desc = '[L]SP [R]estart' })
 
-vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv", { silent = true })
-vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv", { silent = true })
+vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv", { desc = 'Move selection down', silent = true })
+vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv", { desc = 'Move selection up', silent = true })
+vim.keymap.set('n', 'J', 'mzJ`z', { desc = 'Join line below (keep cursor)', silent = true })
+vim.keymap.set('n', '<C-d>', '<C-d>zz', { desc = 'Half page down (centered)', silent = true })
+vim.keymap.set('n', '<C-u>', '<C-u>zz', { desc = 'Half page up (centered)', silent = true })
+vim.keymap.set('n', 'n', 'nzzzv', { desc = 'Next match (centered)', silent = true })
+vim.keymap.set('n', 'N', 'Nzzzv', { desc = 'Previous match (centered)', silent = true })
 
-vim.keymap.set('n', 'J', 'mzJ`z', { silent = true })
-vim.keymap.set('n', '<C-d>', '<C-d>zz', { silent = true })
-vim.keymap.set('n', '<C-u>', '<C-u>zz', { silent = true })
-vim.keymap.set('n', 'n', 'nzzzv', { silent = true })
-vim.keymap.set('n', 'N', 'Nzzzv', { silent = true })
+vim.keymap.set('x', '<leader>p', [["_dP]], { desc = '[P]aste without yanking selection', silent = true })
+vim.keymap.set({ 'n', 'v' }, '<leader>y', [["+y]], { desc = '[Y]ank to system clipboard', silent = true })
+vim.keymap.set('n', '<leader>Y', [["+Y]], { desc = '[Y]ank line to system clipboard', silent = true })
+vim.keymap.set({ 'n', 'v' }, '<leader>x', [["_d]], { desc = 'Delete without yanking', silent = true })
 
-vim.keymap.set('x', '<leader>p', [["_dP]], { silent = true })
-
-vim.keymap.set({ 'n', 'v' }, '<leader>y', [["+y]], { silent = true })
-vim.keymap.set('n', '<leader>Y', [["+Y]], { silent = true })
-
-vim.keymap.set({ 'n', 'v' }, '<leader>d', [["_d]], { silent = true })
-
--- [[ Basic Autocommands ]]
+-- [[ Autocommands ]]
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
   callback = function()
-    vim.highlight.on_yank()
+    vim.hl.on_yank()
   end,
 })
 
@@ -69,37 +85,12 @@ if not vim.uv.fs_stat(lazypath) then
   if vim.v.shell_error ~= 0 then
     error('Error cloning lazy.nvim:\n' .. out)
   end
-end ---@diagnostic disable-next-line: undefined-field
+end
 vim.opt.rtp:prepend(lazypath)
 
--- [[ Configure and install plugins ]]
-require('lazy').setup({
-
-  require 'plugins.autopairs',
-  require 'plugins.catppuccin',
-  require 'plugins.cmp',
-  require 'plugins.conform',
-  require 'plugins.debug',
-  require 'plugins.gitsigns',
-  require 'plugins.harpoon',
-  require 'plugins.jdtls',
-  require 'plugins.lazydev',
-  require 'plugins.lsp_config',
-  require 'plugins.lualine',
-  require 'plugins.mini',
-  require 'plugins.neo-tree',
-  require 'plugins.neotest',
-  require 'plugins.noice',
-  require 'plugins.roslyn',
-  require 'plugins.telescope',
-  require 'plugins.tmux_navigator',
-  require 'plugins.todo_comments',
-  require 'plugins.treesitter',
-  require 'plugins.vim_sleuth',
-  require 'plugins.visual_multi',
-  require 'plugins.which_key',
-  require 'plugins.zen_mode',
-}, {
+-- [[ Plugins ]]
+require('lazy').setup {
+  spec = { { import = 'plugins' } },
   ui = {
     icons = vim.g.have_nerd_font and {} or {
       cmd = '⌘',
@@ -117,4 +108,4 @@ require('lazy').setup({
       lazy = '💤 ',
     },
   },
-})
+}

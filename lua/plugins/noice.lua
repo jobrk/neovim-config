@@ -1,6 +1,12 @@
+-- Floating cmdline and message UI
+-- https://github.com/folke/noice.nvim
+
 return {
-  "folke/noice.nvim",
-  event = "VeryLazy",
+  'folke/noice.nvim',
+  event = 'VeryLazy',
+  dependencies = {
+    'MunifTanjim/nui.nvim',
+  },
   opts = {
     cmdline = { enabled = true },
     messages = { enabled = true },
@@ -21,7 +27,4 @@ return {
       lsp_doc_border = false,
     },
   },
-  dependencies = {
-      "MunifTanjim/nui.nvim",
-  }
 }

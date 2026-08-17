@@ -1,4 +1,7 @@
-return { -- Fuzzy Finder (files, lsp, etc)
+-- Fuzzy finder for files, grep, buffers, LSP symbols, and more
+-- https://github.com/nvim-telescope/telescope.nvim
+
+return {
   'nvim-telescope/telescope.nvim',
   event = 'VimEnter',
   dependencies = {
@@ -15,25 +18,24 @@ return { -- Fuzzy Finder (files, lsp, etc)
   },
   config = function()
     require('telescope').setup {
-            defaults = {
-    vimgrep_arguments = {
-      "rg",
-      "--color=never",
-      "--no-heading",
-      "--with-filename",
-      "--line-number",
-      "--column",
-      "--smart-case",
-      "--hidden",
-    },
-  },
-
+      defaults = {
+        vimgrep_arguments = {
+          'rg',
+          '--color=never',
+          '--no-heading',
+          '--with-filename',
+          '--line-number',
+          '--column',
+          '--smart-case',
+          '--hidden',
+        },
+      },
       extensions = {
         ['ui-select'] = {
           require('telescope.themes').get_dropdown(),
         },
-        fzf = {}
-      }
+        fzf = {},
+      },
     }
 
     pcall(require('telescope').load_extension, 'fzf')
@@ -53,7 +55,9 @@ return { -- Fuzzy Finder (files, lsp, etc)
     end, { desc = '[S]earch [D]iagnostics' })
     vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
     vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-    vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+    vim.keymap.set('n', '<leader><leader>', function()
+      builtin.buffers { sort_mru = true, ignore_current_buffer = true }
+    end, { desc = '[ ] Find existing buffers' })
 
     vim.keymap.set('n', '<leader>/', function()
       builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {

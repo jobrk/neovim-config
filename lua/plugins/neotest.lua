@@ -1,20 +1,13 @@
+-- Test runner with .NET, Jest, and Vitest adapters
+-- https://github.com/nvim-neotest/neotest
+
 return {
   'nvim-neotest/neotest',
-  requires = {
-    {
-      'Issafalcon/neotest-dotnet',
-      'nvim-neotest/neotest-jest',
-      'marilari88/neotest-vitest',
-    },
-  },
   dependencies = {
     'nvim-neotest/nvim-nio',
     'nvim-lua/plenary.nvim',
     'nvim-treesitter/nvim-treesitter',
-    {
-      'Issafalcon/neotest-dotnet',
-      lazy = false,
-    },
+    'Issafalcon/neotest-dotnet',
     'nvim-neotest/neotest-jest',
     'marilari88/neotest-vitest',
   },
@@ -36,7 +29,7 @@ return {
     {
       '<leader>ta',
       function()
-        require('neotest').run.run(vim.loop.cwd())
+        require('neotest').run.run(vim.uv.cwd())
       end,
       desc = 'Test: run all',
     },

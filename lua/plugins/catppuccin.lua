@@ -1,11 +1,16 @@
+-- Catppuccin colorscheme (macchiato flavour, transparent background)
+-- https://github.com/catppuccin/nvim
+
 return {
   'catppuccin/nvim',
-  version = 'v1.10.0',
   name = 'catppuccin',
   priority = 1000,
   opts = {
     flavour = 'macchiato',
     transparent_background = true,
+    float = {
+      transparent = true,
+    },
   },
   config = function(_, opts)
     require('catppuccin').setup(opts)

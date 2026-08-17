@@ -1,7 +1,8 @@
+-- Debug Adapter Protocol client with UI, virtual text, and Go/.NET adapters
+-- https://github.com/mfussenegger/nvim-dap
+
 return {
-  -- NOTE: Yes, you can install new plugins here!
   'mfussenegger/nvim-dap',
-  -- NOTE: And you can specify dependencies as well
   dependencies = {
     -- Creates a beautiful debugger UI
     {
@@ -34,15 +35,7 @@ return {
     -- Add your own debuggers here
     'leoluz/nvim-dap-go',
 
-    {
-        "theHamsta/nvim-dap-virtual-text",
-        lazy = true,
-        config = function()
-            require"nvim-dap-virtual-text".setup{
-                commented = true,
-            }
-        end
-    }
+    { 'theHamsta/nvim-dap-virtual-text', opts = { commented = true } },
   },
   keys = {
     {
@@ -149,19 +142,13 @@ return {
     dap.adapters.coreclr = netcoredbg_adapter -- needed for unit test debugging
 
     require('mason-nvim-dap').setup {
-      -- automatic_installation = true,
       handlers = {},
       ensure_installed = {
         'delve',
       },
     }
 
-    -- Dap UI setup
-    -- For more information, see |:help nvim-dap-ui|
     dapui.setup {
-      -- Set icons to characters that are more likely to work in every terminal.
-      --    Feel free to remove or use ones that you like more! :)
-      --    Don't feel like these are good choices.
       icons = { expanded = '▾', collapsed = '▸', current_frame = '*' },
       controls = {
         icons = {
@@ -184,8 +171,10 @@ return {
         name = 'launch - netcoredbg',
         request = 'launch',
         program = function()
-          -- return vim.fn.input("Path to dll: ", vim.fn.getcwd() .. "/src/", "file")
-          return vim.fn.input('Path to dll: ', vim.fn.getcwd() .. '/bin/Debug/net9.0/', 'file')
+          -- Default to the newest bin/Debug/net*/ dir so the prompt survives .NET version bumps
+          local dirs = vim.fn.glob(vim.fn.getcwd() .. '/bin/Debug/net*/', true, true)
+          local default = dirs[#dirs] or (vim.fn.getcwd() .. '/bin/Debug/')
+          return vim.fn.input('Path to dll: ', default, 'file')
         end,
       },
     }
