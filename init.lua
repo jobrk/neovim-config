@@ -77,6 +77,23 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+vim.api.nvim_create_autocmd('BufReadPost', {
+  desc = 'Restore cursor to last position when reopening a file',
+  group = vim.api.nvim_create_augroup('restore-cursor', { clear = true }),
+  callback = function(ev)
+    local mark = vim.api.nvim_buf_get_mark(ev.buf, '"')
+    if mark[1] > 0 and mark[1] <= vim.api.nvim_buf_line_count(ev.buf) then
+      pcall(vim.api.nvim_win_set_cursor, 0, mark)
+    end
+  end,
+})
+
+vim.api.nvim_create_autocmd('VimResized', {
+  desc = 'Equalize splits when the terminal is resized',
+  group = vim.api.nvim_create_augroup('resize-splits', { clear = true }),
+  command = 'wincmd =',
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.uv.fs_stat(lazypath) then
@@ -91,6 +108,7 @@ vim.opt.rtp:prepend(lazypath)
 -- [[ Plugins ]]
 require('lazy').setup {
   spec = { { import = 'plugins' } },
+  rocks = { enabled = false },
   ui = {
     icons = vim.g.have_nerd_font and {} or {
       cmd = '⌘',

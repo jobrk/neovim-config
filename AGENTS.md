@@ -23,17 +23,20 @@ a library.
 
 ### Formatting
 
-**StyLua** is the Lua formatter. Run manually from the repo root:
+**StyLua** is the Lua formatter. A pre-commit hook (`.githooks/pre-commit`,
+enabled via `git config core.hooksPath .githooks`) rejects commits that fail
+`stylua --check .` — on a fresh clone, re-run that git config command once.
 
 ```sh
 stylua .
-stylua --check .          # dry-run / CI check
+stylua --check .          # what the pre-commit hook runs
 ```
 
 conform.nvim formats on save inside Neovim (5 s timeout). Formatter mapping:
 - Lua: `stylua`
 - JS/TS/JSX/TSX/JSON/JSONC/GraphQL: `oxfmt` if the project opts in (oxfmt
   config file or local node_modules install), otherwise `prettier`
+- Python: `ruff` (organize imports, then format); Go: `goimports`
 - Other filetypes: LSP fallback (except C/C++ which skip formatting)
 
 ### Linting
