@@ -106,7 +106,7 @@ return {
         'sqlls',
         'stylua',
         'terraform-ls',
-        'tsc',
+        'ts_ls',
         'vue-language-server',
         'zls',
       },
