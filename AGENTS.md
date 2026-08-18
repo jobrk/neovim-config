@@ -117,7 +117,7 @@ Use the narrowest trigger possible:
   - `<leader>h` -- Git hunk
 - Movement/visual keymaps use `{ silent = true }`.
 - Local `map()` helper functions are acceptable inside `config` functions
-  for conciseness (see `lsp_config.lua`, `gitsigns.lua`).
+  for conciseness (see `lspconfig.lua`, `gitsigns.lua`).
 
 ### Imports and Requires
 
@@ -140,8 +140,9 @@ map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
 
 ### Naming Conventions
 
-- Plugin files: `snake_case.lua` (e.g., `lsp_config.lua`, `todo_comments.lua`)
-  except when matching the plugin name verbatim (`neo-tree.lua`).
+- Plugin files: the plugin name, snake_cased, with any `vim-`/`nvim-` prefix
+  and `.nvim` suffix dropped (e.g., `todo_comments.lua`, `sleuth.lua`,
+  `lspconfig.lua`, `dap.lua`).
 - Local variables: `snake_case`.
 - Augroup names: `'kickstart-<purpose>'` (inherited from kickstart.nvim).
 

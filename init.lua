@@ -53,7 +53,7 @@ end, { desc = 'Previous error' })
 vim.keymap.set('n', ']e', function()
   vim.diagnostic.jump { count = 1, severity = vim.diagnostic.severity.ERROR }
 end, { desc = 'Next error' })
-vim.keymap.set('n', '<leader>lr', '<cmd>LspRestart<CR>', { desc = '[L]SP [R]estart' })
+vim.keymap.set('n', '<leader>cr', '<cmd>LspRestart<CR>', { desc = '[C]ode LSP [R]estart' })
 
 vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv", { desc = 'Move selection down', silent = true })
 vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv", { desc = 'Move selection up', silent = true })
