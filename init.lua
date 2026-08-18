@@ -12,7 +12,7 @@ vim.opt.cursorline = true -- Highlight current line
 vim.opt.scrolloff = 10 -- Keep 10 lines around cursor
 vim.opt.smoothscroll = true -- <C-d> over wrapped/folded lines scrolls by screen line
 vim.opt.wrap = false -- No line wrapping
-vim.opt.showmode = false -- Mode already shown by lualine
+vim.opt.showmode = false -- Mode already shown by statusline
 vim.opt.winborder = 'single' -- Border for all floating windows
 vim.opt.shortmess:append 'I' -- No intro screen on start
 
