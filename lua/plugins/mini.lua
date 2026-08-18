@@ -103,7 +103,6 @@ return {
           local diff = section_diff()
           local diagnostics = section_diagnostics()
           local filename = statusline.section_filename { trunc_width = 140 }
-          local location = statusline.section_location { trunc_width = 75 }
           local recording = vim.fn.reg_recording() ~= '' and ('rec @' .. vim.fn.reg_recording()) or ''
           return statusline.combine_groups {
             { hl = mode_hl, strings = { mode, recording } },
@@ -111,8 +110,7 @@ return {
             '%<',
             { hl = 'MiniStatuslineFilename', strings = { filename } },
             '%=',
-            { hl = 'MiniStatuslineFileinfo', strings = { vim.bo.filetype } },
-            { hl = mode_hl, strings = { location } },
+            { hl = 'MiniStatuslineFileinfo', strings = { vim.bo.filetype, '%l:%-2v', '%P' } },
           }
         end,
       },
