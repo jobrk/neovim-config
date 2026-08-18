@@ -41,13 +41,43 @@ return {
 
     -- Statusline: mode+recording | git, diff, diagnostics | file ... filetype | location
     local statusline = require 'mini.statusline'
+
+    -- Diagnostic colors on the statusline bg (stock section is monochrome, all severities)
+    local function set_diag_hl()
+      local bg = vim.api.nvim_get_hl(0, { name = 'MiniStatuslineDevinfo', link = false }).bg
+      for _, lvl in ipairs { 'Error', 'Warn' } do
+        local fg = vim.api.nvim_get_hl(0, { name = 'Diagnostic' .. lvl, link = false }).fg
+        vim.api.nvim_set_hl(0, 'MiniStatuslineDiag' .. lvl, { fg = fg, bg = bg })
+      end
+    end
+    set_diag_hl()
+    vim.api.nvim_create_autocmd('ColorScheme', {
+      group = vim.api.nvim_create_augroup('statusline-diag-hl', { clear = true }),
+      callback = set_diag_hl,
+    })
+
+    local function section_diagnostics()
+      if statusline.is_truncated(75) then
+        return ''
+      end
+      local count = vim.diagnostic.count(0)
+      local parts = {}
+      for _, d in ipairs { { 'Error', 'E' }, { 'Warn', 'W' } } do
+        local n = count[vim.diagnostic.severity[d[1]:upper()]] or 0
+        if n > 0 then
+          parts[#parts + 1] = ('%%#MiniStatuslineDiag%s#%s%d'):format(d[1], d[2], n)
+        end
+      end
+      return table.concat(parts, ' ')
+    end
+
     statusline.setup {
       content = {
         active = function()
           local mode, mode_hl = statusline.section_mode { trunc_width = 120 }
           local git = statusline.section_git { trunc_width = 40 }
           local diff = statusline.section_diff { trunc_width = 75 }
-          local diagnostics = statusline.section_diagnostics { trunc_width = 75 }
+          local diagnostics = section_diagnostics()
           local filename = statusline.section_filename { trunc_width = 140 }
           local location = statusline.section_location { trunc_width = 75 }
           local recording = vim.fn.reg_recording() ~= '' and ('rec @' .. vim.fn.reg_recording()) or ''
