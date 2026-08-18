@@ -44,6 +44,19 @@ return { -- Autoformat
   'stevearc/conform.nvim',
   event = { 'BufWritePre' },
   cmd = { 'ConformInfo' },
+  init = function()
+    vim.api.nvim_create_user_command('FormatDisable', function(args)
+      if args.bang then
+        vim.b.disable_autoformat = true
+      else
+        vim.g.disable_autoformat = true
+      end
+    end, { desc = 'Disable format-on-save (! for this buffer only)', bang = true })
+    vim.api.nvim_create_user_command('FormatEnable', function()
+      vim.b.disable_autoformat = false
+      vim.g.disable_autoformat = false
+    end, { desc = 'Re-enable format-on-save' })
+  end,
   keys = {
     {
       '<leader>f',
@@ -53,10 +66,21 @@ return { -- Autoformat
       mode = '',
       desc = '[F]ormat buffer',
     },
+    {
+      '<leader>tF',
+      function()
+        vim.b.disable_autoformat = not vim.b.disable_autoformat
+        vim.notify('Format on save: ' .. (vim.b.disable_autoformat and 'off' or 'on') .. ' (buffer)')
+      end,
+      desc = '[T]oggle [F]ormat on save (buffer)',
+    },
   },
   opts = {
     notify_on_error = true,
     format_on_save = function(bufnr)
+      if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
+        return
+      end
       local disable_filetypes = { c = true, cpp = true }
       local lsp_format_opt
       if disable_filetypes[vim.bo[bufnr].filetype] then

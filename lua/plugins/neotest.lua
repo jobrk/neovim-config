@@ -1,4 +1,4 @@
--- Test runner with .NET, Jest, and Vitest adapters
+-- Test runner with .NET, Go, Python, Rust, Jest, and Vitest adapters
 -- https://github.com/nvim-neotest/neotest
 
 return {
@@ -10,6 +10,9 @@ return {
     'Issafalcon/neotest-dotnet',
     'nvim-neotest/neotest-jest',
     'marilari88/neotest-vitest',
+    'fredrikaverpil/neotest-golang',
+    'nvim-neotest/neotest-python',
+    'rouge8/neotest-rust',
   },
   keys = {
     {
@@ -75,6 +78,9 @@ return {
         require 'neotest-dotnet',
         require 'neotest-jest',
         require 'neotest-vitest',
+        require 'neotest-golang',
+        require 'neotest-python',
+        require 'neotest-rust',
       },
     }
   end,

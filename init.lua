@@ -10,6 +10,7 @@ vim.opt.relativenumber = true -- Relative numbers elsewhere
 vim.opt.signcolumn = 'yes' -- Always show sign column (no shifting)
 vim.opt.cursorline = true -- Highlight current line
 vim.opt.scrolloff = 10 -- Keep 10 lines around cursor
+vim.opt.smoothscroll = true -- <C-d> over wrapped/folded lines scrolls by screen line
 vim.opt.wrap = false -- No line wrapping
 vim.opt.showmode = false -- Mode already shown by lualine
 vim.opt.winborder = 'single' -- Border for all floating windows
@@ -21,6 +22,9 @@ vim.opt.tabstop = 2 -- Tab renders as 2 spaces
 vim.opt.updatetime = 250 -- Faster CursorHold / swap writes
 vim.opt.timeoutlen = 300 -- Wait 300ms for mapped sequences
 vim.opt.spelllang = 'en_us' -- Spell language (spell off by default)
+vim.opt.jumpoptions = 'stack' -- <C-o>/<C-i> behave like a browser history stack
+vim.opt.virtualedit = 'block' -- visual-block past end-of-line (rectangles that make sense)
+vim.opt.diffopt:append 'linematch:60' -- dramatically better intra-hunk diff alignment
 
 vim.opt.ignorecase = true -- Case-insensitive search...
 vim.opt.smartcase = true -- ...unless query has capitals
