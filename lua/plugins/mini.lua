@@ -42,19 +42,43 @@ return {
     -- Statusline: mode+recording | git, diff, diagnostics | file ... filetype | location
     local statusline = require 'mini.statusline'
 
-    -- Diagnostic colors on the statusline bg (stock section is monochrome, all severities)
-    local function set_diag_hl()
+    -- Diagnostic and diff colors on the statusline bg (stock sections are monochrome)
+    local function set_section_hl()
       local bg = vim.api.nvim_get_hl(0, { name = 'MiniStatuslineDevinfo', link = false }).bg
-      for _, lvl in ipairs { 'Error', 'Warn' } do
-        local fg = vim.api.nvim_get_hl(0, { name = 'Diagnostic' .. lvl, link = false }).fg
-        vim.api.nvim_set_hl(0, 'MiniStatuslineDiag' .. lvl, { fg = fg, bg = bg })
+      for group, source in pairs {
+        MiniStatuslineDiagError = 'DiagnosticError',
+        MiniStatuslineDiagWarn = 'DiagnosticWarn',
+        MiniStatuslineDiffAdd = 'GitSignsAdd',
+        MiniStatuslineDiffChange = 'GitSignsChange',
+        MiniStatuslineDiffDelete = 'GitSignsDelete',
+      } do
+        local fg = vim.api.nvim_get_hl(0, { name = source, link = false }).fg
+        vim.api.nvim_set_hl(0, group, { fg = fg, bg = bg })
       end
     end
-    set_diag_hl()
+    set_section_hl()
     vim.api.nvim_create_autocmd('ColorScheme', {
-      group = vim.api.nvim_create_augroup('statusline-diag-hl', { clear = true }),
-      callback = set_diag_hl,
+      group = vim.api.nvim_create_augroup('statusline-section-hl', { clear = true }),
+      callback = set_section_hl,
     })
+
+    local function section_diff()
+      if statusline.is_truncated(75) then
+        return ''
+      end
+      local status = vim.b.gitsigns_status_dict
+      if not status then
+        return ''
+      end
+      local parts = {}
+      for _, d in ipairs { { 'added', 'Add', '+' }, { 'changed', 'Change', '~' }, { 'removed', 'Delete', '-' } } do
+        local n = status[d[1]] or 0
+        if n > 0 then
+          parts[#parts + 1] = ('%%#MiniStatuslineDiff%s#%s%d'):format(d[2], d[3], n)
+        end
+      end
+      return table.concat(parts, ' ')
+    end
 
     local function section_diagnostics()
       if statusline.is_truncated(75) then
@@ -76,7 +100,7 @@ return {
         active = function()
           local mode, mode_hl = statusline.section_mode { trunc_width = 120 }
           local git = statusline.section_git { trunc_width = 40 }
-          local diff = statusline.section_diff { trunc_width = 75 }
+          local diff = section_diff()
           local diagnostics = section_diagnostics()
           local filename = statusline.section_filename { trunc_width = 140 }
           local location = statusline.section_location { trunc_width = 75 }
