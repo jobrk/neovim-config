@@ -10,7 +10,6 @@ vim.opt.relativenumber = true -- Relative numbers elsewhere
 vim.opt.signcolumn = 'yes' -- Always show sign column (no shifting)
 vim.opt.cursorline = true -- Highlight current line
 vim.opt.scrolloff = 10 -- Keep 10 lines around cursor
-vim.opt.smoothscroll = true -- <C-d> over wrapped/folded lines scrolls by screen line
 vim.opt.wrap = false -- No line wrapping
 vim.opt.showmode = false -- Mode already shown by statusline
 vim.opt.winborder = 'single' -- Border for all floating windows
