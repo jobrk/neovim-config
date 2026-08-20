@@ -1,4 +1,4 @@
--- Catppuccin colorscheme (macchiato flavour, transparent background)
+-- Catppuccin colorscheme (mocha flavour, transparent background)
 -- https://github.com/catppuccin/nvim
 
 return {
@@ -6,7 +6,7 @@ return {
   name = 'catppuccin',
   priority = 1000,
   opts = {
-    flavour = 'macchiato',
+    flavour = 'mocha',
     transparent_background = true,
     float = {
       transparent = true,
