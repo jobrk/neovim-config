@@ -47,7 +47,7 @@ return { -- Highlight, edit, and navigate code
   branch = 'main',
   lazy = false,
   build = function()
-    require('nvim-treesitter').install(parsers):wait(300000)
+    require('nvim-treesitter').install(parsers, { max_jobs = 1 }):wait(300000)
   end,
   config = function()
     local function enable_treesitter(bufnr)
