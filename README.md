@@ -18,5 +18,4 @@ nvim
 ```
 
 The provisioning script installs all plugins, configured Tree-sitter parsers,
-language servers, formatters, and debug adapters before the first interactive
-launch. Use `:Mason` to inspect the installed tools.
+language servers, formatters, and debug adapters. Use `:Mason` to inspect them.
