@@ -91,6 +91,8 @@ return {
         'eslint-lsp',
         'goimports',
         'gopls',
+        'java-debug-adapter',
+        'java-test',
         'jdtls',
         'jinja-lsp',
         'json-lsp',
