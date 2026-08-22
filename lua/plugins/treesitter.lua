@@ -9,7 +9,6 @@ local parsers = {
   'css',
   'diff',
   'dockerfile',
-  'gitcommit',
   'gitignore',
   'git_rebase',
   'go',
