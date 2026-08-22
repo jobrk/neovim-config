@@ -91,6 +91,7 @@ return {
         'eslint-lsp',
         'goimports',
         'gopls',
+        'jdtls',
         'jinja-lsp',
         'json-lsp',
         'lua_ls',

@@ -1,53 +1,10 @@
 -- Treesitter parsers for highlighting and indentation, auto-installed per filetype
 -- https://github.com/nvim-treesitter/nvim-treesitter
 
--- Parsers to install on plugin install/update (via :Lazy build)
-local parsers = {
-  'bash',
-  'c',
-  'c_sharp',
-  'css',
-  'diff',
-  'dockerfile',
-  'gitignore',
-  'git_rebase',
-  'go',
-  'graphql',
-  'groovy',
-  'html',
-  'ini',
-  'javascript',
-  'jinja',
-  'jinja_inline',
-  'json',
-  'lua',
-  'luadoc',
-  'markdown',
-  'markdown_inline',
-  'powershell',
-  'proto',
-  'puppet',
-  'python',
-  'query',
-  'rust',
-  'sql',
-  'toml',
-  'tsx',
-  'typescript',
-  'vim',
-  'vimdoc',
-  'xml',
-  'yaml',
-  'zsh',
-}
-
 return { -- Highlight, edit, and navigate code
   'nvim-treesitter/nvim-treesitter',
   branch = 'main',
   lazy = false,
-  build = function()
-    require('nvim-treesitter').install(parsers, { max_jobs = 1 }):wait(300000)
-  end,
   config = function()
     local function enable_treesitter(bufnr)
       if not vim.api.nvim_buf_is_valid(bufnr) then
