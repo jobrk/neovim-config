@@ -13,7 +13,10 @@ Personal Neovim configuration. See [AGENTS.md](AGENTS.md) for structure and conv
 ```sh
 git clone <this repo> ~/.config/nvim
 git -C ~/.config/nvim config core.hooksPath .githooks
-nvim   # lazy.nvim bootstraps and installs plugins on first launch
+~/.config/nvim/provision.sh
+nvim
 ```
 
-Language servers, formatters, and debug adapters install via Mason on first use (`:Mason` to inspect).
+The provisioning script installs all plugins, configured Tree-sitter parsers,
+language servers, formatters, and debug adapters before the first interactive
+launch. Use `:Mason` to inspect the installed tools.

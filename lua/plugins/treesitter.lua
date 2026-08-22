@@ -1,45 +1,7 @@
--- Treesitter parsers for highlighting and indentation, installed on first launch
+-- Treesitter parsers for highlighting and indentation
 -- https://github.com/nvim-treesitter/nvim-treesitter
 
--- Install the complete language set while lazy.nvim bootstraps this plugin.
-local parsers = {
-  'bash',
-  'c',
-  'c_sharp',
-  'css',
-  'diff',
-  'dockerfile',
-  'gitignore',
-  'git_rebase',
-  'go',
-  'graphql',
-  'groovy',
-  'html',
-  'ini',
-  'javascript',
-  'jinja',
-  'jinja_inline',
-  'json',
-  'lua',
-  'luadoc',
-  'markdown',
-  'markdown_inline',
-  'powershell',
-  'proto',
-  'puppet',
-  'python',
-  'query',
-  'rust',
-  'sql',
-  'toml',
-  'tsx',
-  'typescript',
-  'vim',
-  'vimdoc',
-  'xml',
-  'yaml',
-  'zsh',
-}
+local parsers = require('tooling').treesitter
 
 return { -- Highlight, edit, and navigate code
   'nvim-treesitter/nvim-treesitter',
@@ -70,25 +32,7 @@ return { -- Highlight, edit, and navigate code
 
         if pcall(vim.treesitter.language.inspect, lang) then
           enable_treesitter(ev.buf)
-          return
         end
-
-        if not vim.tbl_contains(require('nvim-treesitter').get_available(), lang) then
-          return
-        end
-
-        -- Parser missing: install async, then enable once ready
-        local ok, task = pcall(require('nvim-treesitter').install, { lang })
-        if not ok or not task then
-          return
-        end
-        task:await(function(err, installed)
-          if not err and installed then
-            vim.schedule(function()
-              enable_treesitter(ev.buf)
-            end)
-          end
-        end)
       end,
     })
   end,

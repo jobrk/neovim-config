@@ -47,7 +47,7 @@ No standalone linter config (no `.luacheckrc`, `selene.toml`). Rely on
 ### Checking the Config Loads
 
 ```sh
-nvim --headless "+Lazy! sync" +qa      # install/update plugins
+./provision.sh                          # restore plugins and install editor tooling
 nvim --headless "+checkhealth" +qa     # run health checks
 ```
 
@@ -176,7 +176,7 @@ Per `.gitignore`: `.luarc.json`, `spell/`, `tags`, `test.sh`.
 1. Create `lua/plugins/<plugin_name>.lua` returning a lazy.nvim spec (a table,
    never a bare string — `lazy.setup` imports the whole `plugins/` directory).
 2. Run `stylua .` to format.
-3. Restart Neovim; lazy.nvim auto-installs on next launch.
+3. Run `./provision.sh` to install the plugin before the next interactive launch.
 
 To disable a plugin, set `enabled = false` in its spec; delete the file once
 it's clearly not coming back.

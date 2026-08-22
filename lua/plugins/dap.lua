@@ -143,9 +143,7 @@ return {
 
     require('mason-nvim-dap').setup {
       handlers = {},
-      ensure_installed = {
-        'delve',
-      },
+      ensure_installed = require('tooling').mason_dap,
     }
 
     dapui.setup {

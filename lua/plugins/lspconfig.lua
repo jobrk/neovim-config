@@ -87,31 +87,8 @@ return {
     })
 
     require('mason-tool-installer').setup {
-      ensure_installed = {
-        'eslint-lsp',
-        'goimports',
-        'gopls',
-        'java-debug-adapter',
-        'java-test',
-        'jdtls',
-        'jinja-lsp',
-        'json-lsp',
-        'lua_ls',
-        'netcoredbg',
-        'oxfmt',
-        'prettier',
-        'puppet-editor-services',
-        'pyright',
-        'roslyn',
-        'ruff',
-        'rust_analyzer',
-        'sqlls',
-        'stylua',
-        'terraform-ls',
-        'ts_ls',
-        'vue-language-server',
-        'zls',
-      },
+      ensure_installed = require('tooling').mason,
+      run_on_start = false,
     }
 
     require('mason-lspconfig').setup {
