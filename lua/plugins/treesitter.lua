@@ -32,7 +32,6 @@ local parsers = {
   'query',
   'rust',
   'sql',
-  'tmux',
   'toml',
   'tsx',
   'typescript',
