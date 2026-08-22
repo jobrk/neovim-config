@@ -101,7 +101,13 @@ vim.api.nvim_create_autocmd('VimResized', {
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.uv.fs_stat(lazypath) then
   local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
-  local out = vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
+  local lockfile = vim.fn.stdpath 'config' .. '/lazy-lock.json'
+  local lock = vim.json.decode(table.concat(vim.fn.readfile(lockfile), '\n'))
+  local lazy_commit = lock['lazy.nvim'].commit
+  local out = vim.fn.system { 'git', 'clone', '--filter=blob:none', '--no-checkout', lazyrepo, lazypath }
+  if vim.v.shell_error == 0 then
+    out = vim.fn.system { 'git', '-C', lazypath, 'checkout', lazy_commit }
+  end
   if vim.v.shell_error ~= 0 then
     error('Error cloning lazy.nvim:\n' .. out)
   end
