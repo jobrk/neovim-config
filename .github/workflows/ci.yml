@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GITHUB_API_TOKEN: ${{ github.token }}
+      GITHUB_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+
+      - name: Install prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes build-essential curl unzip
+          curl -fsSL https://github.com/neovim/neovim/releases/download/stable/nvim-linux-x86_64.tar.gz \
+            | sudo tar --extract --gzip --directory /opt
+          echo /opt/nvim-linux-x86_64/bin >> "$GITHUB_PATH"
+
+      - name: Link configuration
+        run: |
+          mkdir -p ~/.config
+          ln -s "$GITHUB_WORKSPACE" ~/.config/nvim
+
+      - name: Provision editor
+        run: ./provision.sh
+
+      - name: Check formatting
+        run: ~/.local/share/nvim/mason/bin/stylua --check .
+
+      - name: Run smoke test
+        run: nvim --headless '+luafile tests/smoke.lua' +qa
+
+      - name: Check repository cleanliness
+        run: git diff --exit-code

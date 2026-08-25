@@ -18,8 +18,8 @@ Each plugin gets its own file in `lua/plugins/`. There are no `lua/config/`,
 
 ## Build / Lint / Format Commands
 
-There is no Makefile, CI pipeline, or test suite. This is a Neovim config, not
-a library.
+GitHub Actions provisions the editor from scratch, checks formatting, and runs
+`tests/smoke.lua`. This is a configuration smoke suite, not a library test suite.
 
 ### Formatting
 
@@ -49,6 +49,7 @@ No standalone linter config (no `.luacheckrc`, `selene.toml`). Rely on
 ```sh
 ./provision.sh                          # restore plugins and install editor tooling
 nvim --headless "+checkhealth" +qa     # run health checks
+nvim --headless "+luafile tests/smoke.lua" +qa
 ```
 
 ## Code Style Guidelines
