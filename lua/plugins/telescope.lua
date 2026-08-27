@@ -29,6 +29,7 @@ return {
           '--hidden',
           '--glob=!**/.git/*',
           '--glob=!**/.worktrees/*',
+          '--glob=!**/.claude/worktrees/*',
         },
       },
       extensions = {
