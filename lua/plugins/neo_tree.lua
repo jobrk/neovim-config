@@ -33,6 +33,11 @@ return {
       },
       window = {
         position = 'float',
+        popup = {
+          title = function()
+            return ''
+          end,
+        },
         mappings = {
           ['<C-c>'] = 'close_window',
           ['l'] = 'open',

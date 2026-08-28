@@ -107,7 +107,7 @@ Use the narrowest trigger possible:
 ### Keymap Conventions
 
 - Leader key is Space.
-- Descriptions use bracket notation for which-key: `'[S]earch [H]elp'`
+- Descriptions use bracket notation for mini.clue: `'[S]earch [H]elp'`
 - Standard namespace prefixes:
   - `<leader>s` -- Search
   - `<leader>c` -- Code
@@ -142,7 +142,7 @@ map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
 ### Naming Conventions
 
 - Plugin files: the plugin name, snake_cased, with any `vim-`/`nvim-` prefix
-  and `.nvim` suffix dropped (e.g., `todo_comments.lua`, `sleuth.lua`,
+  and `.nvim` suffix dropped (e.g., `zen_mode.lua`, `sleuth.lua`,
   `lspconfig.lua`, `dap.lua`).
 - Local variables: `snake_case`.
 - Augroup names: `'kickstart-<purpose>'` (inherited from kickstart.nvim).

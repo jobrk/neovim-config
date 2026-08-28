@@ -1,5 +1,5 @@
 -- Collection of small independent modules (using: ai textobjects, surround,
--- pairs, icons, statusline)
+-- pairs, icons, statusline, hipatterns, sessions, clue)
 -- https://github.com/echasnovski/mini.nvim
 
 return {
@@ -34,6 +34,85 @@ return {
 
     -- Auto-insert matching brackets, quotes, and parens
     require('mini.pairs').setup()
+
+    -- Highlight TODO, FIXME, HACK, NOTE in comments
+    local hipatterns = require 'mini.hipatterns'
+    local function comment_word(word, group)
+      return {
+        pattern = function(buf_id)
+          return vim.bo[buf_id].commentstring ~= '' and '%f[%w]()' .. word .. '()%f[%W]' or nil
+        end,
+        group = group,
+      }
+    end
+    hipatterns.setup {
+      highlighters = {
+        fixme = comment_word('FIXME', 'MiniHipatternsFixme'),
+        hack = comment_word('HACK', 'MiniHipatternsHack'),
+        todo = comment_word('TODO', 'MiniHipatternsTodo'),
+        note = comment_word('NOTE', 'MiniHipatternsNote'),
+      },
+    }
+
+    -- Session persistence per directory
+    local sessions = require 'mini.sessions'
+    local function cwd_session_name()
+      return (vim.fn.getcwd():gsub('[/\\:]', '%%'))
+    end
+    sessions.setup { autoread = false, autowrite = true }
+    vim.api.nvim_create_autocmd('VimLeavePre', {
+      group = vim.api.nvim_create_augroup('session-autowrite', { clear = true }),
+      callback = function()
+        if #vim.api.nvim_list_uis() > 0 and vim.env.NVIM == nil then
+          sessions.write(cwd_session_name(), { force = true })
+        end
+      end,
+    })
+    vim.keymap.set('n', '<leader>sl', function()
+      sessions.read(cwd_session_name())
+    end, { desc = '[S]ession [L]oad (cwd)' })
+    vim.keymap.set('n', '<leader>sL', function()
+      sessions.read(sessions.get_latest())
+    end, { desc = '[S]ession [L]oad last' })
+
+    -- Popup showing pending keybinds as you type
+    local clue = require 'mini.clue'
+    clue.setup {
+      triggers = {
+        { mode = 'n', keys = '<Leader>' },
+        { mode = 'x', keys = '<Leader>' },
+        { mode = 'n', keys = 'g' },
+        { mode = 'x', keys = 'g' },
+        { mode = 'n', keys = "'" },
+        { mode = 'n', keys = '`' },
+        { mode = 'n', keys = '"' },
+        { mode = 'x', keys = '"' },
+        { mode = 'i', keys = '<C-r>' },
+        { mode = 'c', keys = '<C-r>' },
+        { mode = 'n', keys = '<C-w>' },
+        { mode = 'n', keys = 'z' },
+        { mode = 'x', keys = 'z' },
+        { mode = 'n', keys = '[' },
+        { mode = 'n', keys = ']' },
+      },
+      clues = {
+        { mode = 'n', keys = '<Leader>c', desc = '+[C]ode' },
+        { mode = 'n', keys = '<Leader>d', desc = '+[D]ocument & [D]ebug' },
+        { mode = 'n', keys = '<Leader>r', desc = '+[R]ename' },
+        { mode = 'n', keys = '<Leader>s', desc = '+[S]earch & [S]ession' },
+        { mode = 'n', keys = '<Leader>w', desc = '+[W]orkspace' },
+        { mode = 'n', keys = '<Leader>t', desc = '+[T]oggle & [T]ests' },
+        { mode = 'n', keys = '<Leader>h', desc = '+Git [H]unk' },
+        { mode = 'x', keys = '<Leader>h', desc = '+Git [H]unk' },
+        clue.gen_clues.builtin_completion(),
+        clue.gen_clues.g(),
+        clue.gen_clues.marks(),
+        clue.gen_clues.registers(),
+        clue.gen_clues.windows(),
+        clue.gen_clues.z(),
+      },
+      window = { delay = 300 },
+    }
 
     -- Icons, also serving telescope/neo-tree via the devicons API
     require('mini.icons').setup()
