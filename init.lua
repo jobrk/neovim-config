@@ -33,7 +33,6 @@ vim.opt.splitright = true -- Vertical splits open right
 vim.opt.splitbelow = true -- Horizontal splits open below
 
 vim.opt.swapfile = false -- No swap files
-vim.opt.backup = false -- No backup files
 vim.opt.writebackup = false -- No backup before overwriting
 vim.opt.undofile = true -- Persistent undo across sessions
 
@@ -119,6 +118,7 @@ require('lazy').setup {
   spec = { { import = 'plugins' } },
   rocks = { enabled = false },
   ui = {
+    border = 'single',
     icons = vim.g.have_nerd_font and {} or {
       cmd = '⌘',
       config = '🛠',

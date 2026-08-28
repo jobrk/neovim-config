@@ -18,7 +18,7 @@ return {
       ['<C-h>'] = { 'snippet_backward', 'fallback' },
     },
     completion = {
-      list = { selection = { preselect = true, auto_insert = false } },
+      list = { selection = { auto_insert = false } },
       documentation = { auto_show = true, auto_show_delay_ms = 250 },
     },
     sources = {
@@ -27,7 +27,6 @@ return {
         lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
       },
     },
-    fuzzy = { implementation = 'prefer_rust_with_warning' },
     signature = { enabled = true },
   },
 }

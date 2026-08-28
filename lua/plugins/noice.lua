@@ -19,6 +19,12 @@ return {
       message = { enabled = false },
     },
     health = { checker = false },
+    views = {
+      popup = { border = { style = 'single' } },
+      cmdline_popup = { border = { style = 'single' } },
+      cmdline_input = { border = { style = 'single' } },
+      confirm = { border = { style = 'single' } },
+    },
     presets = {
       bottom_search = false,
       command_palette = false,

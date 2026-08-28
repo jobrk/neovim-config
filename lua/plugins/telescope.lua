@@ -31,10 +31,17 @@ return {
           '--glob=!**/.worktrees/*',
           '--glob=!**/.claude/worktrees/*',
         },
+        borderchars = { '─', '│', '─', '│', '┌', '┐', '┘', '└' },
       },
       extensions = {
         ['ui-select'] = {
-          require('telescope.themes').get_dropdown(),
+          require('telescope.themes').get_dropdown {
+            borderchars = {
+              prompt = { '─', '│', ' ', '│', '┌', '┐', '│', '│' },
+              results = { '─', '│', '─', '│', '├', '┤', '┘', '└' },
+              preview = { '─', '│', '─', '│', '┌', '┐', '┘', '└' },
+            },
+          },
         },
         fzf = {},
       },
