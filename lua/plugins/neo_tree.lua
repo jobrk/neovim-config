@@ -18,6 +18,7 @@ return {
     },
   },
   opts = {
+    popup_border_style = 'rounded',
     event_handlers = {
       {
         event = 'neo_tree_buffer_enter',
