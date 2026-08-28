@@ -18,7 +18,7 @@ return {
     },
   },
   opts = {
-    popup_border_style = 'rounded',
+    popup_border_style = '', -- follow 'winborder'
     event_handlers = {
       {
         event = 'neo_tree_buffer_enter',
@@ -34,11 +34,6 @@ return {
       },
       window = {
         position = 'float',
-        popup = {
-          title = function()
-            return ''
-          end,
-        },
         mappings = {
           ['<C-c>'] = 'close_window',
           ['l'] = 'open',
