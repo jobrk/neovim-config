@@ -1,12 +1,13 @@
 -- Autocompletion engine with LSP, path, and snippet sources
 -- https://github.com/Saghen/blink.cmp
+-- The snippets source stays for user-defined snippets; the friendly-snippets
+-- community pack drowned completions in boilerplate nobody here uses.
 
 return {
   'saghen/blink.cmp',
   event = 'InsertEnter',
   version = '1.*',
   dependencies = {
-    'rafamadriz/friendly-snippets',
     'folke/lazydev.nvim',
   },
   ---@module 'blink.cmp'
