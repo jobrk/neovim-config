@@ -1,6 +1,8 @@
 -- Floating cmdline and message UI
 -- https://github.com/folke/noice.nvim
 
+local ui = require 'ui'
+
 return {
   'folke/noice.nvim',
   event = 'VeryLazy',
@@ -19,12 +21,7 @@ return {
       message = { enabled = false },
     },
     health = { checker = false },
-    views = {
-      popup = { border = { style = 'single' } },
-      cmdline_popup = { border = { style = 'single' } },
-      cmdline_input = { border = { style = 'single' } },
-      confirm = { border = { style = 'single' } },
-    },
+    views = ui.noice_views { 'popup', 'cmdline_popup', 'cmdline_input', 'confirm' },
     presets = {
       bottom_search = false,
       command_palette = false,

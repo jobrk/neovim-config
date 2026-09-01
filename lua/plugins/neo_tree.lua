@@ -18,7 +18,7 @@ return {
     },
   },
   opts = {
-    popup_border_style = '', -- follow 'winborder'
+    popup_border_style = '', -- inherit the winborder set from lua/ui.lua
     event_handlers = {
       {
         event = 'neo_tree_buffer_enter',

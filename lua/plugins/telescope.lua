@@ -1,6 +1,9 @@
 -- Fuzzy finder for files, grep, buffers, LSP symbols, and more
 -- https://github.com/nvim-telescope/telescope.nvim
 
+local search = require 'search'
+local ui = require 'ui'
+
 return {
   'nvim-telescope/telescope.nvim',
   event = 'VimEnter',
@@ -16,31 +19,27 @@ return {
     { 'nvim-telescope/telescope-ui-select.nvim' },
   },
   config = function()
+    local vimgrep_arguments = {
+      'rg',
+      '--color=never',
+      '--no-heading',
+      '--with-filename',
+      '--line-number',
+      '--column',
+      '--smart-case',
+      '--hidden',
+    }
+    vim.list_extend(vimgrep_arguments, search.rg_exclude_globs())
+
     require('telescope').setup {
       defaults = {
-        vimgrep_arguments = {
-          'rg',
-          '--color=never',
-          '--no-heading',
-          '--with-filename',
-          '--line-number',
-          '--column',
-          '--smart-case',
-          '--hidden',
-          '--glob=!**/.git/*',
-          '--glob=!**/.worktrees/*',
-          '--glob=!**/.claude/worktrees/*',
-        },
-        borderchars = { '─', '│', '─', '│', '┌', '┐', '┘', '└' },
+        vimgrep_arguments = vimgrep_arguments,
+        borderchars = ui.telescope_borderchars(),
       },
       extensions = {
         ['ui-select'] = {
           require('telescope.themes').get_dropdown {
-            borderchars = {
-              prompt = { '─', '│', ' ', '│', '┌', '┐', '│', '│' },
-              results = { '─', '│', '─', '│', '├', '┤', '┘', '└' },
-              preview = { '─', '│', '─', '│', '┌', '┐', '┘', '└' },
-            },
+            borderchars = ui.telescope_dropdown_borderchars(),
           },
         },
         fzf = {},
@@ -54,7 +53,7 @@ return {
     vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
     vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
     vim.keymap.set('n', '<C-p>', function()
-      builtin.find_files { previewer = false, hidden = true, file_ignore_patterns = { '%.git/', '%.worktrees/' } }
+      builtin.find_files { previewer = false, hidden = true, file_ignore_patterns = search.telescope_ignore_patterns() }
     end, { desc = 'Search Files' })
     vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
     vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })

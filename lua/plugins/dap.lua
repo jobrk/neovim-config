@@ -1,8 +1,15 @@
 -- Debug Adapter Protocol client with UI, virtual text, and Go/.NET adapters
 -- https://github.com/mfussenegger/nvim-dap
 
+local function dap_action(method)
+  return function()
+    require('dap')[method]()
+  end
+end
+
 return {
   'mfussenegger/nvim-dap',
+  event = 'VeryLazy',
   dependencies = {
     -- Creates a beautiful debugger UI
     {
@@ -40,31 +47,23 @@ return {
   keys = {
     {
       '<leader>dc',
-      function()
-        require('dap').continue()
-      end,
+      dap_action 'continue',
       desc = 'DAP: continue',
     },
     {
       '<leader>dr',
-      function()
-        require('dap').restart()
-      end,
+      dap_action 'restart',
       desc = 'DAP: restart',
     },
     {
       '<leader>dq',
-      function()
-        require('dap').terminate()
-      end,
+      dap_action 'terminate',
       desc = 'DAP: quit',
     },
 
     {
       '<leader>db',
-      function()
-        require('dap').toggle_breakpoint()
-      end,
+      dap_action 'toggle_breakpoint',
       desc = 'DAP: toggle breakpoint',
     },
     {
@@ -77,38 +76,28 @@ return {
 
     {
       '<leader>dn',
-      function()
-        require('dap').step_over()
-      end,
+      dap_action 'step_over',
       desc = 'DAP: step over',
     },
     {
       '<leader>di',
-      function()
-        require('dap').step_into()
-      end,
+      dap_action 'step_into',
       desc = 'DAP: step into',
     },
     {
       '<leader>do',
-      function()
-        require('dap').step_out()
-      end,
+      dap_action 'step_out',
       desc = 'DAP: step out',
     },
 
     {
       '<leader>dk',
-      function()
-        require('dap').up()
-      end,
+      dap_action 'up',
       desc = 'DAP: stack up',
     },
     {
       '<leader>dj',
-      function()
-        require('dap').down()
-      end,
+      dap_action 'down',
       desc = 'DAP: stack down',
     },
 

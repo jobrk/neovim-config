@@ -1,19 +1,28 @@
 -- Test runner with .NET, Go, Python, Rust, Jest, and Vitest adapters
 -- https://github.com/nvim-neotest/neotest
 
+local adapter_specs = {
+  { plugin = 'Issafalcon/neotest-dotnet', module = 'neotest-dotnet' },
+  { plugin = 'nvim-neotest/neotest-jest', module = 'neotest-jest' },
+  { plugin = 'marilari88/neotest-vitest', module = 'neotest-vitest' },
+  { plugin = 'fredrikaverpil/neotest-golang', module = 'neotest-golang' },
+  { plugin = 'nvim-neotest/neotest-python', module = 'neotest-python' },
+  { plugin = 'rouge8/neotest-rust', module = 'neotest-rust' },
+}
+
+local dependencies = {
+  'nvim-neotest/nvim-nio',
+  'nvim-lua/plenary.nvim',
+  'nvim-treesitter/nvim-treesitter',
+}
+for _, adapter in ipairs(adapter_specs) do
+  dependencies[#dependencies + 1] = adapter.plugin
+end
+
 return {
   'nvim-neotest/neotest',
-  dependencies = {
-    'nvim-neotest/nvim-nio',
-    'nvim-lua/plenary.nvim',
-    'nvim-treesitter/nvim-treesitter',
-    'Issafalcon/neotest-dotnet',
-    'nvim-neotest/neotest-jest',
-    'marilari88/neotest-vitest',
-    'fredrikaverpil/neotest-golang',
-    'nvim-neotest/neotest-python',
-    'rouge8/neotest-rust',
-  },
+  event = 'VeryLazy',
+  dependencies = dependencies,
   keys = {
     {
       '<leader>tt',
@@ -73,15 +82,11 @@ return {
     },
   },
   config = function()
+    local adapters = vim.tbl_map(function(adapter)
+      return require(adapter.module)
+    end, adapter_specs)
     require('neotest').setup {
-      adapters = {
-        require 'neotest-dotnet',
-        require 'neotest-jest',
-        require 'neotest-vitest',
-        require 'neotest-golang',
-        require 'neotest-python',
-        require 'neotest-rust',
-      },
+      adapters = adapters,
     }
   end,
 }

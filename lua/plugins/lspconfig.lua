@@ -24,12 +24,13 @@ return {
     vim.api.nvim_create_autocmd('LspAttach', {
       group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
       callback = function(event)
-        local map = function(keys, func, desc)
-          vim.keymap.set('n', keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
+        local map = function(keys, func, desc, opts)
+          opts = vim.tbl_extend('force', { buffer = event.buf, desc = 'LSP: ' .. desc }, opts or {})
+          vim.keymap.set('n', keys, func, opts)
         end
 
         map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
-        map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+        map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences', { nowait = true })
         map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
         map('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
 
@@ -73,7 +74,7 @@ return {
     })
 
     vim.lsp.config('*', {
-      capabilities = require('blink.cmp').get_lsp_capabilities(),
+      capabilities = require('lsp').capabilities(),
     })
 
     vim.lsp.config('lua_ls', {

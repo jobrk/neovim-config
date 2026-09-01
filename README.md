@@ -1,6 +1,8 @@
 # nvim
 
-Personal Neovim configuration. See [AGENTS.md](AGENTS.md) for structure and conventions.
+Personal Neovim configuration. See [AGENTS.md](AGENTS.md) for structure and
+conventions and [CONFIG_CENTRALISATION.md](CONFIG_CENTRALISATION.md) for the
+shared-policy design.
 
 ## Requirements
 

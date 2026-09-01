@@ -7,14 +7,18 @@ Uses lazy.nvim as the plugin manager. Targets a polyglot workflow
 ## Repository Structure
 
 ```
-init.lua              # Entry point: options, keymaps, autocommands, lazy.nvim bootstrap
-lua/plugins/          # One file per plugin spec (lazy.nvim format)
-.stylua.toml          # Lua formatter configuration
+init.lua               # Entry point: options, keymaps, autocommands, lazy.nvim bootstrap
+lua/plugins/           # One file per plugin spec (lazy.nvim format)
+lua/*.lua              # Flat shared policy and focused implementation helpers
+after/lsp/             # Server settings merged after plugin-provided LSP configs
+.stylua.toml           # Lua formatter configuration
 ```
 
 All core settings (options, keymaps, autocommands) live in `init.lua`.
-Each plugin gets its own file in `lua/plugins/`. There are no `lua/config/`,
-`lua/core/`, or `after/` directories.
+Each plugin gets its own file in `lua/plugins/`. Cross-cutting policy (UI,
+search, keymap timing, tooling, and LSP capabilities) and larger extracted
+implementations (mini.clue and the statusline) use focused flat modules under
+`lua/`; do not introduce `lua/config/` or `lua/core/` hierarchies.
 
 ## Build / Lint / Format Commands
 

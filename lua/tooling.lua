@@ -1,6 +1,12 @@
+local debug_adapters = {
+  go = 'delve',
+  dotnet = 'netcoredbg',
+}
+
 return {
+  debug_adapters = debug_adapters,
   mason = {
-    'delve',
+    debug_adapters.go,
     'eslint-lsp',
     'goimports',
     'gopls',
@@ -10,7 +16,7 @@ return {
     'jinja-lsp',
     'json-lsp',
     'lua-language-server',
-    'netcoredbg',
+    debug_adapters.dotnet,
     'oxfmt',
     'prettier',
     'puppet-editor-services',
@@ -26,7 +32,7 @@ return {
     'zls',
   },
   mason_dap = {
-    'delve',
+    debug_adapters.go,
   },
   treesitter = {
     'bash',

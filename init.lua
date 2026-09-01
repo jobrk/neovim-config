@@ -1,4 +1,7 @@
 -- [[ Options ]]
+local keymap_policy = require 'keymap_policy'
+local ui = require 'ui'
+
 vim.g.mapleader = ' ' -- Space as leader key
 vim.g.maplocalleader = ' ' -- Space as local leader too
 vim.g.have_nerd_font = true -- Terminal font has icons
@@ -12,14 +15,14 @@ vim.opt.cursorline = true -- Highlight current line
 vim.opt.scrolloff = 10 -- Keep 10 lines around cursor
 vim.opt.wrap = false -- No line wrapping
 vim.opt.showmode = false -- Mode already shown by statusline
-vim.opt.winborder = 'single' -- Border for all floating windows
+vim.opt.winborder = ui.border.style -- Border for all floating windows
 vim.opt.shortmess:append 'I' -- No intro screen on start
 
 vim.opt.mouse = 'a' -- Mouse in all modes
 vim.opt.confirm = true -- Prompt instead of failing :q with changes
 vim.opt.tabstop = 2 -- Tab renders as 2 spaces
 vim.opt.updatetime = 250 -- Faster CursorHold / swap writes
-vim.opt.timeoutlen = 300 -- Wait 300ms for mapped sequences
+vim.opt.timeoutlen = keymap_policy.mapping_timeout_ms -- Wait for mapped sequences
 vim.opt.spelllang = 'en_us' -- Spell language (spell off by default)
 vim.opt.jumpoptions = 'stack' -- <C-o>/<C-i> behave like a browser history stack
 vim.opt.virtualedit = 'block' -- visual-block past end-of-line (rectangles that make sense)
@@ -118,7 +121,7 @@ require('lazy').setup {
   spec = { { import = 'plugins' } },
   rocks = { enabled = false },
   ui = {
-    border = 'single',
+    border = ui.border.style,
     icons = vim.g.have_nerd_font and {} or {
       cmd = '⌘',
       config = '🛠',
