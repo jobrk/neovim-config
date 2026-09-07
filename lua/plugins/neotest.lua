@@ -7,7 +7,7 @@ local adapter_specs = {
   { plugin = 'marilari88/neotest-vitest', module = 'neotest-vitest' },
   { plugin = 'fredrikaverpil/neotest-golang', module = 'neotest-golang' },
   { plugin = 'nvim-neotest/neotest-python', module = 'neotest-python' },
-  { plugin = 'rouge8/neotest-rust', module = 'neotest-rust' },
+  { plugin = 'mrcjkb/rustaceanvim', module = 'rustaceanvim.neotest' },
 }
 
 local dependencies = {
@@ -48,6 +48,21 @@ return {
     {
       '<leader>td',
       function()
+        local adapters = {
+          python = 'python',
+          rust = 'codelldb',
+          go = 'go',
+          cs = 'coreclr',
+          javascript = 'pwa-node',
+          javascriptreact = 'pwa-node',
+          typescript = 'pwa-node',
+          typescriptreact = 'pwa-node',
+        }
+        local adapter = adapters[vim.bo.filetype]
+        if not adapter or not require('dap').adapters[adapter] then
+          vim.notify('Test debugging is not configured for ' .. vim.bo.filetype, vim.log.levels.WARN)
+          return
+        end
         require('neotest').run.run { strategy = 'dap' }
       end,
       desc = 'Test: debug nearest',

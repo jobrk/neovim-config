@@ -1,4 +1,4 @@
--- Debug Adapter Protocol client with UI, virtual text, and Go/.NET adapters
+-- Debug Adapter Protocol client with UI and polyglot adapters
 -- https://github.com/mfussenegger/nvim-dap
 
 local function dap_action(method)
@@ -37,7 +37,6 @@ return {
 
     -- Installs the debug adapters for you
     'mason-org/mason.nvim',
-    'jay-babu/mason-nvim-dap.nvim',
 
     -- Add your own debuggers here
     'leoluz/nvim-dap-go',
@@ -130,10 +129,7 @@ return {
     dap.adapters.netcoredbg = netcoredbg_adapter -- needed for normal debugging
     dap.adapters.coreclr = netcoredbg_adapter -- needed for unit test debugging
 
-    require('mason-nvim-dap').setup {
-      handlers = {},
-      ensure_installed = require('tooling').mason_dap,
-    }
+    require('debugging').setup()
 
     dapui.setup {
       icons = { expanded = '▾', collapsed = '▸', current_frame = '*' },
@@ -157,12 +153,7 @@ return {
         type = 'coreclr',
         name = 'launch - netcoredbg',
         request = 'launch',
-        program = function()
-          -- Default to the newest bin/Debug/net*/ dir so the prompt survives .NET version bumps
-          local dirs = vim.fn.glob(vim.fn.getcwd() .. '/bin/Debug/net*/', true, true)
-          local default = dirs[#dirs] or (vim.fn.getcwd() .. '/bin/Debug/')
-          return vim.fn.input('Path to dll: ', default, 'file')
-        end,
+        program = require('debugging').dotnet_program,
       },
     }
 

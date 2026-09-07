@@ -8,6 +8,7 @@ return {
       'mason-org/mason.nvim',
       opts = {
         registries = {
+          'lua:mason_registry',
           'github:mason-org/mason-registry',
           'github:Crashdummyy/mason-registry',
         },
@@ -44,6 +45,8 @@ return {
 
         local client = vim.lsp.get_client_by_id(event.data.client_id)
         if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
+          -- One set per buffer, even when several clients provide highlights.
+          vim.api.nvim_clear_autocmds { group = highlight_augroup, buffer = event.buf }
           vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
             buffer = event.buf,
             group = highlight_augroup,
@@ -59,7 +62,8 @@ return {
 
         if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
           map('<leader>th', function()
-            vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
+            local filter = { bufnr = event.buf }
+            vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled(filter), filter)
           end, '[T]oggle Inlay [H]ints')
         end
       end,
@@ -69,7 +73,12 @@ return {
       group = vim.api.nvim_create_augroup('kickstart-lsp-detach', { clear = true }),
       callback = function(event)
         vim.lsp.util.buf_clear_references(event.buf)
-        vim.api.nvim_clear_autocmds { group = highlight_augroup, buffer = event.buf }
+        local remaining = vim.tbl_filter(function(client)
+          return client.id ~= event.data.client_id
+        end, vim.lsp.get_clients { bufnr = event.buf, method = vim.lsp.protocol.Methods.textDocument_documentHighlight })
+        if #remaining == 0 then
+          vim.api.nvim_clear_autocmds { group = highlight_augroup, buffer = event.buf }
+        end
       end,
     })
 
@@ -87,17 +96,19 @@ return {
       },
     })
 
+    local tooling = require 'tooling'
     require('mason-tool-installer').setup {
-      ensure_installed = require('tooling').mason,
+      ensure_installed = vim.tbl_map(function(name)
+        return name == 'netcoredbg' and { name, version = tooling.netcoredbg_version } or name
+      end, tooling.mason),
       run_on_start = false,
+      integrations = { ['mason-nvim-dap'] = false },
     }
 
     require('mason-lspconfig').setup {
-      automatic_enable = {
-        exclude = {
-          'jdtls',
-        },
-      },
+      -- Installation is separate from activation. JDTLS, Roslyn and
+      -- Rustaceanvim own their specialised language-server lifecycles.
+      automatic_enable = require('tooling').lsp,
     }
   end,
 }

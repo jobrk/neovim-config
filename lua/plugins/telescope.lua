@@ -33,6 +33,7 @@ return {
 
     require('telescope').setup {
       defaults = {
+        file_ignore_patterns = search.telescope_ignore_patterns(),
         vimgrep_arguments = vimgrep_arguments,
         borderchars = ui.telescope_borderchars(),
       },
@@ -53,7 +54,7 @@ return {
     vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
     vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
     vim.keymap.set('n', '<C-p>', function()
-      builtin.find_files { previewer = false, hidden = true, file_ignore_patterns = search.telescope_ignore_patterns() }
+      builtin.find_files { previewer = false, hidden = true }
     end, { desc = 'Search Files' })
     vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
     vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })

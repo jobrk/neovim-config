@@ -1,12 +1,20 @@
 local debug_adapters = {
   go = 'delve',
   dotnet = 'netcoredbg',
+  python = 'debugpy',
+  javascript = 'js-debug-adapter',
+  rust = 'codelldb',
 }
 
 return {
+  -- Mason's upstream recipe still ships an Intel-only macOS build.
+  netcoredbg_version = (vim.fn.has 'macunix' == 1 and vim.uv.os_uname().machine == 'x86_64') and '3.1.3-1062' or '3.2.0-1092',
   debug_adapters = debug_adapters,
   mason = {
     debug_adapters.go,
+    debug_adapters.python,
+    debug_adapters.javascript,
+    debug_adapters.rust,
     'eslint-lsp',
     'goimports',
     'gopls',
@@ -31,8 +39,21 @@ return {
     'vue-language-server',
     'zls',
   },
-  mason_dap = {
-    debug_adapters.go,
+  -- Specialised plugins own Java, C# and Rust. Formatters run via Conform.
+  lsp = {
+    'eslint',
+    'gopls',
+    'jinja_lsp',
+    'jsonls',
+    'lua_ls',
+    'puppet',
+    'pyright',
+    'ruff',
+    'sqlls',
+    'terraformls',
+    'ts_ls',
+    'vue_ls',
+    'zls',
   },
   treesitter = {
     'bash',
@@ -46,8 +67,10 @@ return {
     'go',
     'graphql',
     'groovy',
+    'hcl',
     'html',
     'ini',
+    'java',
     'javascript',
     'jinja',
     'jinja_inline',
@@ -68,8 +91,10 @@ return {
     'typescript',
     'vim',
     'vimdoc',
+    'vue',
     'xml',
     'yaml',
+    'zig',
     'zsh',
   },
 }

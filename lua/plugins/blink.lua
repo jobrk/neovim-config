@@ -3,7 +3,7 @@
 
 return {
   'saghen/blink.cmp',
-  event = 'InsertEnter',
+  lazy = false, -- LSP capabilities need Blink before the first server starts.
   version = '1.*',
   dependencies = {
     'folke/lazydev.nvim',
@@ -22,7 +22,7 @@ return {
       documentation = { auto_show = true, auto_show_delay_ms = 250 },
     },
     sources = {
-      default = { 'lsp', 'path', 'snippets', 'lazydev' },
+      default = { 'lsp', 'path', 'snippets', 'buffer', 'lazydev' },
       providers = {
         lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
       },

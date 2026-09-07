@@ -17,7 +17,7 @@ after/lsp/             # Server settings merged after plugin-provided LSP config
 All core settings (options, keymaps, autocommands) live in `init.lua`.
 Each plugin gets its own file in `lua/plugins/`. Cross-cutting policy (UI,
 search, keymap timing, tooling, and LSP capabilities) and larger extracted
-implementations (mini.clue and the statusline) use focused flat modules under
+implementations (debugging and the statusline) use focused flat modules under
 `lua/`; do not introduce `lua/config/` or `lua/core/` hierarchies.
 
 ## Build / Lint / Format Commands
@@ -39,7 +39,8 @@ stylua --check .          # what the pre-commit hook runs
 conform.nvim formats on save inside Neovim (5 s timeout). Formatter mapping:
 - Lua: `stylua`
 - JS/TS/JSX/TSX/JSON/JSONC/GraphQL: `oxfmt` if the project opts in (oxfmt
-  config file or local node_modules install), otherwise `prettier`
+  config file), otherwise `prettier`. The nearest explicit config wins, with
+  Prettier winning same-directory conflicts. Web filetypes never use LSP fallback.
 - Python: `ruff` (organize imports, then format); Go: `goimports`
 - Other filetypes: LSP fallback (except C/C++ which skip formatting)
 
@@ -53,7 +54,7 @@ No standalone linter config (no `.luacheckrc`, `selene.toml`). Rely on
 ```sh
 ./provision.sh                          # restore plugins and install editor tooling
 nvim --headless "+checkhealth" +qa     # run health checks
-nvim --headless "+luafile tests/smoke.lua" +qa
+./check.sh                             # returns nonzero on Lua/query failures
 ```
 
 ## Code Style Guidelines
@@ -71,7 +72,7 @@ nvim --headless "+luafile tests/smoke.lua" +qa
 StyLua's `call_parentheses = "None"` means bare calls are canonical:
 
 ```lua
-require 'cmp'                   -- preferred (no parens)
+require 'blink.cmp'                   -- preferred (no parens)
 vim.fn.stdpath 'data'           -- preferred
 ```
 
@@ -102,7 +103,9 @@ unless the plugin requires procedural setup logic.
 
 ### Lazy Loading Strategies
 
-Use the narrowest trigger possible:
+Use a narrow trigger when compatible with dependencies and first-key behaviour.
+Blink is eager for LSP capabilities; DAP/Neotest use VeryLazy, and Rustaceanvim
+loads its own filetype integration. Typical triggers:
 - `event`: `'VimEnter'`, `'InsertEnter'`, `'VeryLazy'`, `'BufWritePre'`
 - `ft`: filetype string or list (`'java'`, `{ 'cs', 'razor' }`)
 - `cmd`: command string or list (`'Neotree'`, `'ZenMode'`)
@@ -111,7 +114,7 @@ Use the narrowest trigger possible:
 ### Keymap Conventions
 
 - Leader key is Space.
-- Descriptions use bracket notation for mini.clue: `'[S]earch [H]elp'`
+- Descriptions use bracket notation for the WhichKey guide: `'[S]earch [H]elp'`
 - Standard namespace prefixes:
   - `<leader>s` -- Search
   - `<leader>c` -- Code
@@ -128,7 +131,7 @@ Use the narrowest trigger possible:
 
 ```lua
 -- Top of config function: assign to local
-local cmp = require 'cmp'
+local blink = require 'blink.cmp'
 
 -- Inline require for one-off use in keymaps is fine
 map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
@@ -159,13 +162,16 @@ map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
 
 ## Key Design Decisions
 
-- **No swap/backup files**: `swapfile`, `backup`, `writebackup` all `false`.
+- **Recovery**: swap files in `stdpath("state")/swap`, persistent undo, temporary
+  write backups; no persistent backup files in projects. Two-space fallback
+  indentation, with sleuth and EditorConfig adapting to the project.
 - **Netrw disabled**: `vim.g.loaded_netrw = 1` in favor of neo-tree.
 - **Mason as universal installer**: LSP servers, formatters, linters, DAP adapters.
   Uses a custom registry (`Crashdummyy/mason-registry`) for Roslyn.
-- **jdtls excluded from mason-lspconfig auto-enable**: configured separately
-  via `nvim-jdtls` with filetype trigger.
-- **Catppuccin macchiato** colorscheme with transparent background.
+- **Explicit LSP activation**: `tooling.lsp` is the mason-lspconfig allowlist.
+  JDTLS, Roslyn and Rustaceanvim own Java, C# and Rust respectively. Java setup
+  runs for every Java buffer, with a separate workspace per project.
+- **Catppuccin mocha** colorscheme with transparent background.
 - **ThePrimeagen-style keymaps**: centered scrolling (`<C-d>zz`), centered
   search (`nzzzv`), visual line move (`J`/`K`), black-hole delete, system
   clipboard yank.
@@ -174,14 +180,17 @@ map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
 
 Per `.gitignore`: `.luarc.json`, `spell/`, `tags`, `test.sh`.
 `lazy-lock.json` IS committed — it pins plugin versions for reproducibility
-(`:Lazy restore` rolls back to it after a bad update).
+(run `./provision.sh` after reverting an update to align parsers too). Mason
+tools mostly remain unpinned; netcoredbg is the explicit exception in tooling.
+Do not claim the plugin lockfile covers Mason tools.
 
 ## Adding a New Plugin
 
 1. Create `lua/plugins/<plugin_name>.lua` returning a lazy.nvim spec (a table,
    never a bare string — `lazy.setup` imports the whole `plugins/` directory).
 2. Run `stylua .` to format.
-3. Run `./provision.sh`.
+3. Run `./provision.sh` and `./check.sh`.
+4. Update README language support or policies if behaviour changes.
 
 To disable a plugin, set `enabled = false` in its spec; delete the file once
 it's clearly not coming back.

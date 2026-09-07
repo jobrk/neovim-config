@@ -1,9 +1,9 @@
 -- Collection of small independent modules (using: ai textobjects, surround,
--- pairs, icons, statusline, hipatterns, sessions, clue)
+-- pairs, icons, statusline, hipatterns, sessions)
 -- https://github.com/echasnovski/mini.nvim
 
 return {
-  'echasnovski/mini.nvim',
+  'nvim-mini/mini.nvim',
   dependencies = { 'nvim-treesitter/nvim-treesitter-textobjects' },
   config = function()
     -- Better Around/Inside textobjects
@@ -35,7 +35,7 @@ return {
     -- Auto-insert matching brackets, quotes, and parens
     require('mini.pairs').setup()
 
-    -- Highlight TODO, FIXME, HACK, NOTE in comments
+    -- Highlight TODO, FIXME, HACK, NOTE in filetypes with comment syntax
     local hipatterns = require 'mini.hipatterns'
     local function comment_word(word, group)
       return {
@@ -75,9 +75,6 @@ return {
     vim.keymap.set('n', '<leader>sL', function()
       sessions.read(sessions.get_latest())
     end, { desc = '[S]ession [L]oad last' })
-
-    -- Popup showing pending keybinds as a responsive bottom grid
-    require('mini_clue').setup()
 
     -- Icons, also serving telescope/neo-tree via the devicons API
     require('mini.icons').setup()

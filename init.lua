@@ -21,6 +21,9 @@ vim.opt.shortmess:append 'I' -- No intro screen on start
 vim.opt.mouse = 'a' -- Mouse in all modes
 vim.opt.confirm = true -- Prompt instead of failing :q with changes
 vim.opt.tabstop = 2 -- Tab renders as 2 spaces
+vim.opt.shiftwidth = 2 -- Fallback; Sleuth and EditorConfig can override it
+vim.opt.softtabstop = 2
+vim.opt.expandtab = true
 vim.opt.updatetime = 250 -- Faster CursorHold / swap writes
 vim.opt.timeoutlen = keymap_policy.mapping_timeout_ms -- Wait for mapped sequences
 vim.opt.spelllang = 'en_us' -- Spell language (spell off by default)
@@ -35,8 +38,11 @@ vim.opt.inccommand = 'split' -- Live preview of :substitute
 vim.opt.splitright = true -- Vertical splits open right
 vim.opt.splitbelow = true -- Horizontal splits open below
 
-vim.opt.swapfile = false -- No swap files
-vim.opt.writebackup = false -- No backup before overwriting
+vim.opt.swapfile = true -- Crash recovery in Neovim's state directory
+vim.opt.directory = vim.fn.stdpath 'state' .. '/swap//'
+vim.fn.mkdir(vim.fn.stdpath 'state' .. '/swap', 'p')
+vim.opt.backup = false -- Do not retain backups after a successful write
+vim.opt.writebackup = true -- Protect the original during a write
 vim.opt.undofile = true -- Persistent undo across sessions
 
 vim.opt.foldmethod = 'expr' -- Folds from expression...
@@ -50,7 +56,7 @@ vim.lsp.log.set_level(vim.log.levels.WARN) -- Keep lsp.log small
 -- [[ Keymaps ]]
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>', { desc = 'Clear search highlight' })
 
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic location list' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror float' })
 vim.keymap.set('n', '[e', function()
   vim.diagnostic.jump { count = -1, severity = vim.diagnostic.severity.ERROR }
@@ -106,13 +112,16 @@ if not vim.uv.fs_stat(lazypath) then
   local lockfile = vim.fn.stdpath 'config' .. '/lazy-lock.json'
   local lock = vim.json.decode(table.concat(vim.fn.readfile(lockfile), '\n'))
   local lazy_commit = lock['lazy.nvim'].commit
-  local out = vim.fn.system { 'git', 'clone', '--filter=blob:none', '--no-checkout', lazyrepo, lazypath }
+  local clonepath = lazypath .. '.tmp-' .. vim.fn.getpid()
+  local out = vim.fn.system { 'git', 'clone', '--filter=blob:none', '--no-checkout', lazyrepo, clonepath }
   if vim.v.shell_error == 0 then
-    out = vim.fn.system { 'git', '-C', lazypath, 'checkout', lazy_commit }
+    out = vim.fn.system { 'git', '-C', clonepath, 'checkout', lazy_commit }
   end
   if vim.v.shell_error ~= 0 then
+    vim.fn.delete(clonepath, 'rf')
     error('Error cloning lazy.nvim:\n' .. out)
   end
+  assert(vim.uv.fs_rename(clonepath, lazypath))
 end
 vim.opt.rtp:prepend(lazypath)
 
