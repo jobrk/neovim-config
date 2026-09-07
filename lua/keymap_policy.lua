@@ -25,4 +25,37 @@ function M.which_key_groups()
   return groups
 end
 
+function M.which_key_spec()
+  local spec = M.which_key_groups()
+  -- Keep MiniAi descriptions aligned with the objects in plugins/mini.lua.
+  local objects = {
+    a = 'argument',
+    b = 'bracket pair',
+    c = 'class',
+    f = 'function definition',
+    q = 'quoted text',
+    t = 'tag',
+    u = 'function call',
+    ['?'] = 'prompt for delimiters',
+    ['"'] = 'double-quoted text',
+    ["'"] = 'single-quoted text',
+    ['`'] = 'backtick-quoted text',
+    ['('] = 'parentheses (trim inner whitespace)',
+    [')'] = 'parentheses',
+    ['['] = 'square brackets (trim inner whitespace)',
+    [']'] = 'square brackets',
+    ['{'] = 'braces (trim inner whitespace)',
+    ['}'] = 'braces',
+    ['<'] = 'angle brackets (trim inner whitespace)',
+    ['>'] = 'angle brackets',
+  }
+  for prefix, label in pairs { a = 'around', i = 'inside', an = 'around next', ['in'] = 'inside next', al = 'around previous', il = 'inside previous' } do
+    spec[#spec + 1] = { prefix, mode = { 'o', 'x' }, group = label }
+    for key, description in pairs(objects) do
+      spec[#spec + 1] = { prefix .. key, mode = { 'o', 'x' }, desc = description }
+    end
+  end
+  return spec
+end
+
 return M

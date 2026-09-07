@@ -12,7 +12,7 @@ and substantial helpers stay in flat `lua/*.lua` modules; there is no
 |---|---|
 | `ui.lua` | Border style and Telescope border glyphs |
 | `search.lua` | Search exclusions shared by file and grep pickers |
-| `keymap_policy.lua` | Mapping timeout, WhichKey delay and leader groups |
+| `keymap_policy.lua` | Mapping timeout, WhichKey delay, leader groups and MiniAi hint descriptions |
 | `lsp.lua` | Completion capabilities shared by native and specialised LSPs |
 | `tooling.lua` | Mason package inventory, LSP allowlist and parser inventory |
 | `parsers.lua` | Install/update declared parsers and propagate failures |
@@ -38,7 +38,9 @@ Provisioning uses `scripts/run.lua` through `check.sh` so Lua exceptions return
 a nonzero shell status. The three provision tasks are separate to isolate
 plugin restoration, parser alignment and Mason installation. `tests/smoke.lua`
 checks the installed configuration and runs `tests/behavior.lua` for formatter
-selection and buffer/client lifecycle regressions.
+selection and buffer/client lifecycle regressions. `tests/keyguide.lua` uses
+a child Neovim with an attached UI to check actual popup content and key
+dispatch, including built-in helpers that add their own trigger mappings.
 
 Do not extract tiny repeated calls merely to reduce line count. File-local
 action/adapter tables remain appropriate, and an autocommand naming helper is

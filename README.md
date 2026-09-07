@@ -107,11 +107,35 @@ Vue, CSS, HTML, JSON, Markdown, YAML and the other web formats listed in
 
 ## Navigation and UI
 
-Space is leader. Hold Space for the WhichKey guide; group names and timing
-live in `lua/keymap_policy.lua`. The guide only triggers on leader mappings.
+Space is leader. Hold Space for the WhichKey guide; group names, text-object
+descriptions and timing live in `lua/keymap_policy.lua`.
+
+| Keys | Guide |
+|---|---|
+| Space | Leader actions in normal and visual mode |
+| `g`, `z`, `[`, `]` | Navigation, folds and other prefixed commands |
+| `Ctrl-w` | Window commands in normal mode |
+| `<leader>?` | Current-buffer mappings, including LSP and plugin-local actions |
+| `'`, backtick | Marks |
+| `"`, `Ctrl-r` in insert/command mode | Registers |
+| `z=` | Spelling suggestions |
+
+Visual and operator-pending help is deferred until another key is pressed.
+For text-object hints, pause after `d` or `y`, then press `i` or `a`; the guide
+includes Mini's arguments, quotes, function definitions, classes, function
+calls and next/previous variants. MiniAi reads the object key itself when the
+prefix is typed quickly, so typing `di` quickly and then pausing does not open
+this guide. Complete fast sequences such as `diw` keep their normal behaviour.
+The existing `gr` references mapping remains immediate, including after
+opening the `g` menu.
+
 Search lives under `<leader>s`, code actions under `<leader>c`, debugging under
 `<leader>d` and tests/toggles under `<leader>t`. `<leader>q` fills the diagnostic
 location list. `<leader>th` toggles inlay hints for the current buffer.
+
+`./check.sh` tests the guide in a child Neovim with an attached UI: real prefix
+input, popup contents, buffer filtering, deferred hints and key dispatch.
+It uses Neovim's own RPC client and requires no additional test dependencies.
 
 Noice handles messages/command input, Telescope handles selection, and the
 shared border policy lives in `lua/ui.lua`. Mini provides the statusline,

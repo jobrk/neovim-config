@@ -113,7 +113,9 @@ loads its own filetype integration. Typical triggers:
 
 ### Keymap Conventions
 
-- Leader key is Space.
+- Leader key is Space. WhichKey covers leader and navigation/window prefixes;
+  `<leader>?` shows buffer-local mappings. Keep MiniAi hint descriptions in
+  `keymap_policy.lua` aligned with the configured text objects.
 - Descriptions use bracket notation for the WhichKey guide: `'[S]earch [H]elp'`
 - Standard namespace prefixes:
   - `<leader>s` -- Search
@@ -124,6 +126,8 @@ loads its own filetype integration. Typical triggers:
   - `<leader>t` -- Toggle / Tests
   - `<leader>h` -- Git hunk
 - Movement/visual keymaps use `{ silent = true }`.
+- Run `./check.sh` after key-guide changes: `tests/keyguide.lua` exercises actual
+  UI input, including immediate `gr` dispatch and deferred text-object hints.
 - Local `map()` helper functions are acceptable inside `config` functions
   for conciseness (see `lspconfig.lua`, `gitsigns.lua`).
 

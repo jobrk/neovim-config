@@ -69,11 +69,6 @@ local ui, keymap_policy = require 'ui', require 'keymap_policy'
 assert(vim.o.winborder == ui.border.style and lazy.options.ui.border == ui.border.style)
 local which_key = require('which-key.config').options
 assert(which_key.delay == keymap_policy.hint_delay_ms)
-local triggers = require('which-key.config').triggers.mappings
-assert(#triggers == 2, 'Unexpected key guide triggers')
-for _, trigger in ipairs(triggers) do
-  assert(trigger.lhs == '<leader>' and (trigger.mode == 'n' or trigger.mode == 'x'), 'Key guide intercepts non-leader keys')
-end
 assert(vim.o.timeoutlen == keymap_policy.mapping_timeout_ms)
 assert(vim.o.expandtab and vim.o.shiftwidth == 2 and vim.o.softtabstop == 2)
 assert(vim.o.swapfile and vim.o.writebackup and vim.o.undofile)
@@ -83,4 +78,6 @@ assert(vim.deep_equal(telescope.file_ignore_patterns, require('search').telescop
 
 step 'Checking formatter selection and buffer/client lifecycle regressions'
 dofile 'tests/behavior.lua'
+step 'Checking key guide popups and live input in an attached UI'
+dofile 'tests/keyguide.lua'
 print '\nNeovim smoke test passed'
