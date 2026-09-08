@@ -37,7 +37,15 @@ return {
       spelling = { enabled = true },
     },
     spec = require('keymap_policy').which_key_spec(),
-    win = { border = require('ui').border.style },
-    layout = { width = { min = 32 }, spacing = 2 },
+    show_help = false,
+    show_keys = false, -- The border title already shows the active prefix.
+    win = {
+      border = require('ui').border.style,
+      padding = { 0, 1 },
+      no_overlap = false, -- Keep the bottom panel intact when the cursor is low.
+      height = { min = 1, max = math.huge }, -- Fit rows instead of clipping to 25.
+    },
+    -- A maximum matters: one long description must not force a single column.
+    layout = { width = { min = 20, max = 28 }, spacing = 2 },
   },
 }

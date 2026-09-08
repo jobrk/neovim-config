@@ -37,6 +37,31 @@ local function expect_popup(keys, text)
     return popup():find(text, 1, true) ~= nil
   end)
 end
+local function expect_compact(max_height)
+  local layout = lua [[
+    local windows, height, rows, columns = 0, 0, 0, 0
+    for _, win in ipairs(vim.api.nvim_list_wins()) do
+      local buf = vim.api.nvim_win_get_buf(win)
+      if vim.bo[buf].filetype == 'wk' then
+        windows = windows + 1
+        if vim.api.nvim_win_get_config(win).relative == 'editor' then
+          height = vim.api.nvim_win_get_height(win)
+          local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+          rows = #lines
+          for _, line in ipairs(lines) do
+            local _, count = line:gsub('➜', '')
+            columns = math.max(columns, count)
+          end
+        end
+      end
+    end
+    return { windows = windows, height = height, rows = rows, columns = columns }
+  ]]
+  assert(layout.windows == 1, 'Key guide has an extra footer window')
+  assert(layout.rows > 0 and layout.rows <= layout.height, 'Key guide requires scrolling: ' .. vim.inspect(layout))
+  assert(layout.columns >= 2, 'Key guide is not using multiple columns')
+  assert(layout.height <= max_height, 'Key guide uses too many rows: ' .. vim.inspect(layout))
+end
 local function reset()
   input '<Esc><Esc>'
   wait_for('Key guide did not close', function()
@@ -68,18 +93,36 @@ local ok, err = xpcall(function()
 
   for _, case in ipairs {
     { ' ', 'Search' },
-    { 'g', '[R]eferences' },
+    { 'g', '[R]efer' }, -- Long descriptions are ellipsized in compact columns.
     { 'z', 'fold' },
     { '[', 'Previous' },
     { ']', 'Next' },
     { '<C-w>', 'Split window' },
     { '"', 'WKREG' },
     { "'", 'a' },
-    { 'z=', 'close' },
   } do
     expect_popup(case[1], case[2])
     reset()
   end
+
+  lua "vim.api.nvim_buf_set_lines(0, 0, -1, false, { 'helo' }); vim.api.nvim_win_set_cursor(0, {1, 0})"
+  expect_popup('z=', 'hello')
+  reset()
+
+  -- Real viewport sizes catch clipping, excess height and single-column regressions.
+  for _, size in ipairs { { 80, 24, 14 }, { 120, 40, 8 }, { 200, 50, 6 } } do
+    vim.rpcrequest(child, 'nvim_ui_try_resize', size[1], size[2])
+    lua [[vim.api.nvim_buf_set_lines(0, 0, -1, false, vim.fn['repeat']({ 'one two three' }, 100))]]
+    for _, position in ipairs { 'ggzt', 'Gzb' } do
+      lua('vim.cmd.normal { ..., bang = true }', position)
+      for _, keys in ipairs { ' ', 'g', 'z', ' s' } do
+        expect_popup(keys, '➜')
+        expect_compact(size[3])
+        reset()
+      end
+    end
+  end
+  vim.rpcrequest(child, 'nvim_ui_try_resize', 120, 40)
 
   expect_popup(' ?', 'Local probe')
   assert(not popup():find('Global probe', 1, true), 'Buffer help includes global mappings')
@@ -90,7 +133,7 @@ local ok, err = xpcall(function()
   for _, paused in ipairs { false, true } do
     local before = lua 'return vim.g.references_called or 0'
     if paused then
-      expect_popup('g', '[R]eferences')
+      expect_popup('g', '[R]efer')
       input 'r'
     else
       input 'gr'

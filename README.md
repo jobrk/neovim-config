@@ -110,6 +110,12 @@ Vue, CSS, HTML, JSON, Markdown, YAML and the other web formats listed in
 Space is leader. Hold Space for the WhichKey guide; group names, text-object
 descriptions and timing live in `lua/keymap_policy.lua`.
 
+The guide uses compact columns across the bottom of the editor, with no extra
+vertical padding or help footer. Column widths are capped so long descriptions
+cannot force a single scrolling column; long labels are shortened with an
+ellipsis. At 120 columns wide, the main menus typically fit in 4–7 rows.
+Press Escape to close the guide or Backspace to return to its parent menu.
+
 | Keys | Guide |
 |---|---|
 | Space | Leader actions in normal and visual mode |
@@ -134,7 +140,9 @@ Search lives under `<leader>s`, code actions under `<leader>c`, debugging under
 location list. `<leader>th` toggles inlay hints for the current buffer.
 
 `./check.sh` tests the guide in a child Neovim with an attached UI: real prefix
-input, popup contents, buffer filtering, deferred hints and key dispatch.
+input, popup contents, buffer filtering, deferred hints and key dispatch. It
+also checks that menus use multiple columns and fit without scrolling at
+80, 120 and 200 columns, with the cursor at the top and bottom of the viewport.
 It uses Neovim's own RPC client and requires no additional test dependencies.
 
 Noice handles messages/command input, Telescope handles selection, and the
