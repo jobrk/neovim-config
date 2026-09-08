@@ -63,6 +63,9 @@ return { -- Autoformat
     end
     return {
       notify_on_error = true,
+      formatters = {
+        oxfmt = { cwd = require('conform.util').root_file(formatting.oxfmt_configs) },
+      },
       format_on_save = function(bufnr)
         if formatting.enabled(bufnr) then
           return { timeout_ms = 5000, lsp_format = formatting.lsp_format(bufnr) }

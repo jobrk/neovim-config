@@ -38,7 +38,7 @@ local prettier_configs = {
   'prettier.config.cts',
   'prettier.config.mts',
 }
-local oxfmt_configs = { '.oxfmtrc.json', '.oxfmtrc.jsonc', 'oxfmt.config.ts' }
+M.oxfmt_configs = { '.oxfmtrc.json', '.oxfmtrc.jsonc', 'oxfmt.config.ts', 'oxfmt.config.mts' }
 
 local function has_config(directory, names)
   for _, name in ipairs(names) do
@@ -67,7 +67,7 @@ function M.web_formatter(bufnr)
     if package_prettier or has_config(directory, prettier_configs) then
       return { 'prettier' }
     end
-    if has_config(directory, oxfmt_configs) then
+    if has_config(directory, M.oxfmt_configs) then
       return { 'oxfmt' }
     end
     if vim.uv.fs_stat(directory .. '/.git') then
