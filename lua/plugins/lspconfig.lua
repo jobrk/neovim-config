@@ -30,13 +30,22 @@ return {
           vim.keymap.set('n', keys, func, opts)
         end
 
-        map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
-        map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences', { nowait = true })
-        map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
-        map('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
+        -- Search exclusions belong to the file and grep pickers. The server already
+        -- scopes its results to the project, and applying the exclusions here would
+        -- discard every result whose path sits under a worktree directory.
+        local lsp_picker = function(name)
+          return function()
+            require('telescope.builtin')[name] { file_ignore_patterns = {} }
+          end
+        end
 
-        map('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
-        map('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+        map('gd', lsp_picker 'lsp_definitions', '[G]oto [D]efinition')
+        map('gr', lsp_picker 'lsp_references', '[G]oto [R]eferences', { nowait = true })
+        map('gI', lsp_picker 'lsp_implementations', '[G]oto [I]mplementation')
+        map('<leader>D', lsp_picker 'lsp_type_definitions', 'Type [D]efinition')
+
+        map('<leader>ds', lsp_picker 'lsp_document_symbols', '[D]ocument [S]ymbols')
+        map('<leader>ws', lsp_picker 'lsp_dynamic_workspace_symbols', '[W]orkspace [S]ymbols')
 
         map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
         map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
