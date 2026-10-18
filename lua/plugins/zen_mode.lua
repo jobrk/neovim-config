@@ -14,7 +14,6 @@ return {
   },
   opts = {
     window = {
-      height = 1,
       width = 140,
     },
     plugins = {

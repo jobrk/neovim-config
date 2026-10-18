@@ -1,9 +1,6 @@
 -- Fuzzy finder for files, grep, buffers, LSP symbols, and more
 -- https://github.com/nvim-telescope/telescope.nvim
 
-local search = require 'search'
-local ui = require 'ui'
-
 return {
   'nvim-telescope/telescope.nvim',
   event = 'VimEnter',
@@ -19,31 +16,32 @@ return {
     { 'nvim-telescope/telescope-ui-select.nvim' },
   },
   config = function()
-    local vimgrep_arguments = {
-      'rg',
-      '--color=never',
-      '--no-heading',
-      '--with-filename',
-      '--line-number',
-      '--column',
-      '--smart-case',
-      '--hidden',
-    }
-    vim.list_extend(vimgrep_arguments, search.rg_exclude_globs())
+    local vimgrep_arguments = vim.deepcopy(require('telescope.config').values.vimgrep_arguments)
+    vimgrep_arguments[#vimgrep_arguments + 1] = '--hidden'
+    local ignore_patterns = {}
+    for _, directory in ipairs { '.git', '.worktrees', '.claude/worktrees' } do
+      vimgrep_arguments[#vimgrep_arguments + 1] = '--glob=!**/' .. directory .. '/*'
+      ignore_patterns[#ignore_patterns + 1] = vim.pesc(directory) .. '/'
+    end
+    -- Telescope draws borders through Plenary and cannot inherit winborder.
+    local borderchars = { '─', '│', '─', '│', '┌', '┐', '┘', '└' }
 
     require('telescope').setup {
       defaults = {
-        file_ignore_patterns = search.telescope_ignore_patterns(),
+        file_ignore_patterns = ignore_patterns,
         vimgrep_arguments = vimgrep_arguments,
-        borderchars = ui.telescope_borderchars(),
+        borderchars = borderchars,
       },
       extensions = {
         ['ui-select'] = {
           require('telescope.themes').get_dropdown {
-            borderchars = ui.telescope_dropdown_borderchars(),
+            borderchars = {
+              prompt = { '─', '│', ' ', '│', '┌', '┐', '│', '│' },
+              results = { '─', '│', '─', '│', '├', '┤', '┘', '└' },
+              preview = borderchars,
+            },
           },
         },
-        fzf = {},
       },
     }
 

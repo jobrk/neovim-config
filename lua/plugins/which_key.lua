@@ -1,4 +1,23 @@
 -- Key discovery for leader actions, native prefixes and text objects.
+local spec = {
+  { '<leader>c', group = '[C]ode' },
+  { '<leader>d', group = '[D]ocument & [D]ebug' },
+  { '<leader>j', group = '[J]ava' },
+  { '<leader>r', group = '[R]ename' },
+  { '<leader>s', group = '[S]earch & [S]ession' },
+  { '<leader>w', group = '[W]orkspace' },
+  { '<leader>t', group = '[T]oggle & [T]ests' },
+  { '<leader>h', mode = { 'n', 'x' }, group = 'Git [H]unk' },
+}
+
+-- Custom MiniAi objects from mini.lua, including next/previous variants.
+for prefix, label in pairs { a = 'around', i = 'inside', an = 'around next', ['in'] = 'inside next', al = 'around previous', il = 'inside previous' } do
+  spec[#spec + 1] = { prefix, mode = { 'o', 'x' }, group = label }
+  for key, description in pairs { f = 'function definition', c = 'class', u = 'function call' } do
+    spec[#spec + 1] = { prefix .. key, mode = { 'o', 'x' }, desc = description }
+  end
+end
+
 return {
   'folke/which-key.nvim',
   version = '^3',
@@ -15,7 +34,7 @@ return {
   },
   opts = {
     preset = 'classic',
-    delay = require('keymap_policy').hint_delay_ms,
+    delay = 200,
     triggers = {
       { '<leader>', mode = 'nx' },
       { 'g', mode = 'nx' },
@@ -31,16 +50,11 @@ return {
     defer = function()
       return true
     end,
-    plugins = {
-      marks = true,
-      registers = true,
-      spelling = { enabled = true },
-    },
-    spec = require('keymap_policy').which_key_spec(),
+    spec = spec,
     show_help = false,
     show_keys = false, -- The border title already shows the active prefix.
     win = {
-      border = require('ui').border.style,
+      border = vim.o.winborder,
       padding = { 0, 1 },
       no_overlap = false, -- Keep the bottom panel intact when the cursor is low.
       height = { min = 1, max = math.huge }, -- Fit rows instead of clipping to 25.

@@ -18,13 +18,13 @@ return {
     },
   },
   opts = {
-    popup_border_style = '', -- inherit the winborder set from lua/ui.lua
+    popup_border_style = '', -- inherit winborder from init.lua
     event_handlers = {
       {
         event = 'neo_tree_buffer_enter',
         handler = function()
-          vim.opt_local.number = true
-          vim.opt_local.relativenumber = true
+          vim.opt_local.number = vim.go.number
+          vim.opt_local.relativenumber = vim.go.relativenumber
         end,
       },
     },

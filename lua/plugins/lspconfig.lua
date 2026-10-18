@@ -92,7 +92,7 @@ return {
     })
 
     vim.lsp.config('*', {
-      capabilities = require('lsp').capabilities(),
+      capabilities = require('blink.cmp').get_lsp_capabilities(),
     })
 
     vim.lsp.config('lua_ls', {
@@ -117,7 +117,7 @@ return {
     require('mason-lspconfig').setup {
       -- Installation is separate from activation. JDTLS, Roslyn and
       -- Rustaceanvim own their specialised language-server lifecycles.
-      automatic_enable = require('tooling').lsp,
+      automatic_enable = tooling.lsp,
     }
   end,
 }

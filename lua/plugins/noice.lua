@@ -1,8 +1,6 @@
 -- Floating cmdline and message UI
 -- https://github.com/folke/noice.nvim
 
-local ui = require 'ui'
-
 return {
   'folke/noice.nvim',
   event = 'VeryLazy',
@@ -10,8 +8,6 @@ return {
     'MunifTanjim/nui.nvim',
   },
   opts = {
-    cmdline = { enabled = true },
-    messages = { enabled = true },
     popupmenu = { enabled = false },
     notify = { enabled = false },
     lsp = {
@@ -21,13 +17,12 @@ return {
       message = { enabled = false },
     },
     health = { checker = false },
-    views = ui.noice_views { 'popup', 'cmdline_popup', 'cmdline_input', 'confirm' },
-    presets = {
-      bottom_search = false,
-      command_palette = false,
-      long_message_to_split = false,
-      inc_rename = false,
-      lsp_doc_border = false,
+    -- NUI's default border style reads Neovim's winborder.
+    views = {
+      popup = { border = { style = 'default' } },
+      cmdline_popup = { border = { style = 'default' } },
+      cmdline_input = { border = { style = 'default' } },
+      confirm = { border = { style = 'default' } },
     },
   },
 }

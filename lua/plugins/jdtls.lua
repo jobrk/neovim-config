@@ -45,7 +45,7 @@ return {
       jdtls.start_or_attach {
         cmd = { jdtls_command, '-data', workspace_dir },
         root_dir = root_dir,
-        capabilities = require('lsp').capabilities(),
+        capabilities = require('blink.cmp').get_lsp_capabilities(),
         init_options = { bundles = bundles },
         on_attach = function()
           jdtls.setup_dap { hotcodereplace = 'auto' }

@@ -1,20 +1,11 @@
-local debug_adapters = {
-  go = 'delve',
-  dotnet = 'netcoredbg',
-  python = 'debugpy',
-  javascript = 'js-debug-adapter',
-  rust = 'codelldb',
-}
-
 return {
   -- Mason's upstream recipe still ships an Intel-only macOS build.
   netcoredbg_version = (vim.fn.has 'macunix' == 1 and vim.uv.os_uname().machine == 'x86_64') and '3.1.3-1062' or '3.2.0-1092',
-  debug_adapters = debug_adapters,
   mason = {
-    debug_adapters.go,
-    debug_adapters.python,
-    debug_adapters.javascript,
-    debug_adapters.rust,
+    'delve',
+    'debugpy',
+    'js-debug-adapter',
+    'codelldb',
     'eslint-lsp',
     'goimports',
     'gopls',
@@ -24,7 +15,7 @@ return {
     'jinja-lsp',
     'json-lsp',
     'lua-language-server',
-    debug_adapters.dotnet,
+    'netcoredbg',
     'oxfmt',
     'prettier',
     'puppet-editor-services',

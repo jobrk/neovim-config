@@ -1,6 +1,46 @@
 -- Debug Adapter Protocol client with UI and polyglot adapters
 -- https://github.com/mfussenegger/nvim-dap
 
+local function python_path()
+  if vim.env.VIRTUAL_ENV then
+    local executable = vim.env.VIRTUAL_ENV .. '/bin/python'
+    if vim.fn.executable(executable) == 1 then
+      return executable
+    end
+  end
+  local directory = vim.fs.dirname(vim.api.nvim_buf_get_name(0))
+  while directory and directory ~= '' do
+    for _, name in ipairs { '.venv', 'venv' } do
+      local executable = directory .. '/' .. name .. '/bin/python'
+      if vim.fn.executable(executable) == 1 then
+        return executable
+      end
+    end
+    if vim.uv.fs_stat(directory .. '/.git') then
+      break
+    end
+    local parent = vim.fs.dirname(directory)
+    if parent == directory then
+      break
+    end
+    directory = parent
+  end
+  return vim.fn.exepath 'python3'
+end
+
+local function dotnet_program()
+  local project = vim.fs.find(function(name)
+    return name:match '%.csproj$' ~= nil
+  end, { upward = true, path = vim.fs.dirname(vim.api.nvim_buf_get_name(0)) })[1]
+  local directory = project and vim.fs.dirname(project) or vim.fn.getcwd()
+  local outputs = vim.fn.glob(directory .. '/bin/Debug/net*/*.runtimeconfig.json', true, true)
+  table.sort(outputs, function(a, b)
+    return vim.fn.getftime(a) > vim.fn.getftime(b)
+  end)
+  local default = outputs[1] and outputs[1]:gsub('%.runtimeconfig%.json$', '.dll') or directory .. '/bin/Debug/'
+  return vim.fn.input('Path to DLL (build the project first): ', default, 'file')
+end
+
 local function dap_action(method)
   return function()
     require('dap')[method]()
@@ -11,7 +51,6 @@ return {
   'mfussenegger/nvim-dap',
   event = 'VeryLazy',
   dependencies = {
-    -- Creates a beautiful debugger UI
     {
       'rcarriga/nvim-dap-ui',
       keys = {
@@ -32,39 +71,17 @@ return {
       },
     },
 
-    -- Required dependency for nvim-dap-ui
     'nvim-neotest/nvim-nio',
-
-    -- Installs the debug adapters for you
     'mason-org/mason.nvim',
-
-    -- Add your own debuggers here
     'leoluz/nvim-dap-go',
-
     { 'theHamsta/nvim-dap-virtual-text', opts = { commented = true } },
   },
   keys = {
-    {
-      '<leader>dc',
-      dap_action 'continue',
-      desc = 'DAP: continue',
-    },
-    {
-      '<leader>dr',
-      dap_action 'restart',
-      desc = 'DAP: restart',
-    },
-    {
-      '<leader>dq',
-      dap_action 'terminate',
-      desc = 'DAP: quit',
-    },
+    { '<leader>dc', dap_action 'continue', desc = 'DAP: continue' },
+    { '<leader>dr', dap_action 'restart', desc = 'DAP: restart' },
+    { '<leader>dq', dap_action 'terminate', desc = 'DAP: quit' },
 
-    {
-      '<leader>db',
-      dap_action 'toggle_breakpoint',
-      desc = 'DAP: toggle breakpoint',
-    },
+    { '<leader>db', dap_action 'toggle_breakpoint', desc = 'DAP: toggle breakpoint' },
     {
       '<leader>dB',
       function()
@@ -73,32 +90,12 @@ return {
       desc = 'DAP: conditional breakpoint',
     },
 
-    {
-      '<leader>dn',
-      dap_action 'step_over',
-      desc = 'DAP: step over',
-    },
-    {
-      '<leader>di',
-      dap_action 'step_into',
-      desc = 'DAP: step into',
-    },
-    {
-      '<leader>do',
-      dap_action 'step_out',
-      desc = 'DAP: step out',
-    },
+    { '<leader>dn', dap_action 'step_over', desc = 'DAP: step over' },
+    { '<leader>di', dap_action 'step_into', desc = 'DAP: step into' },
+    { '<leader>do', dap_action 'step_out', desc = 'DAP: step out' },
 
-    {
-      '<leader>dk',
-      dap_action 'up',
-      desc = 'DAP: stack up',
-    },
-    {
-      '<leader>dj',
-      dap_action 'down',
-      desc = 'DAP: stack down',
-    },
+    { '<leader>dk', dap_action 'up', desc = 'DAP: stack up' },
+    { '<leader>dj', dap_action 'down', desc = 'DAP: stack down' },
 
     {
       '<leader>dh',
@@ -129,9 +126,44 @@ return {
     dap.adapters.netcoredbg = netcoredbg_adapter -- needed for normal debugging
     dap.adapters.coreclr = netcoredbg_adapter -- needed for unit test debugging
 
-    require('debugging').setup()
+    local mason = vim.fn.stdpath 'data' .. '/mason/packages'
+    dap.adapters.python = {
+      type = 'executable',
+      command = mason .. '/debugpy/venv/bin/python',
+      args = { '-m', 'debugpy.adapter' },
+    }
+    dap.configurations.python = {
+      { type = 'python', request = 'launch', name = 'Launch current file', program = '${file}', pythonPath = python_path },
+    }
+
+    dap.adapters['pwa-node'] = {
+      type = 'server',
+      host = '127.0.0.1',
+      port = '${port}',
+      executable = { command = 'js-debug-adapter', args = { '${port}', '127.0.0.1' } },
+    }
+    for _, ft in ipairs { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' } do
+      dap.configurations[ft] = {
+        { type = 'pwa-node', request = 'launch', name = 'Launch current file', program = '${file}', cwd = '${workspaceFolder}', sourceMaps = true },
+        {
+          type = 'pwa-node',
+          request = 'attach',
+          name = 'Attach to Node',
+          processId = require('dap.utils').pick_process,
+          cwd = '${workspaceFolder}',
+          sourceMaps = true,
+        },
+      }
+    end
+
+    dap.adapters.codelldb = {
+      type = 'server',
+      port = '${port}',
+      executable = { command = 'codelldb', args = { '--port', '${port}' } },
+    }
 
     dapui.setup {
+      floating = { border = vim.o.winborder },
       icons = { expanded = '▾', collapsed = '▸', current_frame = '*' },
       controls = {
         icons = {
@@ -153,7 +185,7 @@ return {
         type = 'coreclr',
         name = 'launch - netcoredbg',
         request = 'launch',
-        program = require('debugging').dotnet_program,
+        program = dotnet_program,
       },
     }
 
@@ -161,7 +193,6 @@ return {
     dap.listeners.before.event_terminated['dapui_config'] = dapui.close
     dap.listeners.before.event_exited['dapui_config'] = dapui.close
 
-    -- Install golang specific config
     require('dap-go').setup {
       delve = {
         -- On Windows delve must be run attached or it crashes.

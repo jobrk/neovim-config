@@ -1,26 +1,16 @@
 # nvim
 
 Personal Neovim configuration for Lua, Go, C#/.NET, Java, Python, Rust and
-JavaScript/TypeScript, including Vue. Uses native Neovim LSP, Tree-sitter,
-Blink completion, Telescope, Conform, Neotest and nvim-dap.
+JavaScript/TypeScript, including Vue. Uses lazy.nvim, native LSP, Tree-sitter,
+Blink, Telescope, Conform, Neotest and nvim-dap.
 
-## Requirements
+## Setup
 
-- Neovim 0.12+; CI tests 0.12.5 on Linux. Also used on macOS ARM.
-- git, ripgrep, make, a C compiler, curl, tar and unzip.
-- Tree-sitter CLI 0.27+ to build the configured parsers.
-- Node.js 24 LTS and npm, Python 3, Go, Rust/Cargo and the .NET SDK for
-  installing the full tool inventory. Python must support `venv`.
-- JDK 21+ to run JDTLS; CI uses JDK 25. Individual projects may require
-  additional JDKs, SDKs or language versions.
-- A Nerd Font, or set `vim.g.have_nerd_font = false` in `init.lua`.
-
-Machine-level packages belong in the machine provisioning configuration.
-`provision.sh` checks prerequisites and installs editor tooling through Mason;
-it does not install system runtimes. CI lists concrete runtime versions in
-[ci.yml](.github/workflows/ci.yml).
-
-## Setup and verification
+Requires Neovim 0.12+, git, ripgrep, make, a C compiler, curl, tar, unzip and
+Tree-sitter CLI 0.27+. Installing the full Mason inventory also needs Node.js
+24 LTS/npm, Python 3 with venv, Go, Rust/Cargo, the .NET SDK and JDK 21+.
+Install system runtimes through your machine provisioning. Use a Nerd Font,
+or set `vim.g.have_nerd_font = false` in `init.lua`.
 
 For a standalone clone (the dotfiles repo already includes this as a submodule):
 
@@ -28,149 +18,95 @@ For a standalone clone (the dotfiles repo already includes this as a submodule):
 git clone https://github.com/jobrk/neovim-config.git ~/.config/nvim
 ```
 
-Then, for either installation:
+Then:
 
 ```sh
 cd ~/.config/nvim
 git config core.hooksPath .githooks
 ./provision.sh
-./check.sh
 nvim
 ```
 
-Provisioning restores plugins from `lazy-lock.json`, installs **and updates**
-the declared parsers to their plugin's revisions, then installs missing Mason
-tools. Each stage returns a failing process status on errors. The smoke suite
-checks plugin commits, tools, parser queries, LSP activation and behavioural
-regressions. Use `./check.sh path/to/task.lua` for another headless Lua check;
-a raw `nvim --headless +luafile ... +qa` can report Lua errors while exiting 0.
-
-Use `:checkhealth`, `:Mason`, `:ConformInfo` and `:LspInfo` for interactive
-troubleshooting. Health warnings about optional providers or unused tools do
-not necessarily indicate a broken workflow.
+Provisioning restores locked plugins, installs and updates declared parsers,
+then installs missing Mason tools. Errors return a nonzero process status.
+CI and the pre-commit hook check `stylua --check .`. Check changes by using the
+affected editor workflow; `:checkhealth`, `:Mason`, `:ConformInfo` and `:LspInfo`
+help with troubleshooting.
 
 ## Language support
 
-| Language | LSP / completion | Formatting | Tests / debugging |
-|---|---|---|---|
+| Language | LSP | Formatting | Tests / debugging |
+| --- | --- | --- | --- |
 | Lua | lua_ls, lazydev | StyLua | — |
 | Go | gopls | goimports | Neotest Go, Delve |
-| Python | Pyright and Ruff | Ruff imports, then format | Neotest Python, debugpy |
-| Rust | Rustaceanvim / rust-analyzer | LSP rustfmt | Rustaceanvim Neotest (`cargo test`), CodeLLDB |
-| JS / TS | ts_ls and ESLint | Prettier or explicit oxfmt | Neotest Jest/Vitest, Node DAP |
-| Vue | vue_ls and ts_ls with Vue's TS plugin | Prettier or explicit oxfmt | Project-specific Jest/Vitest; Node DAP for JS/TS |
-| Java | nvim-jdtls, per project and buffer | JDTLS | Java test/debug extensions via nvim-jdtls |
-| C# | Roslyn | LSP | Neotest .NET, netcoredbg |
+| Python | Pyright, Ruff | Ruff imports then format | Neotest Python, debugpy |
+| Rust | Rustaceanvim / rust-analyzer | LSP rustfmt | Rustaceanvim Neotest, CodeLLDB |
+| JS / TS | ts_ls, ESLint | Prettier or explicit oxfmt | Neotest Jest/Vitest, Node DAP |
+| Vue | vue_ls, ts_ls with Vue plugin | Prettier or explicit oxfmt | Project Jest/Vitest; Node DAP for JS/TS |
+| Java | nvim-jdtls | JDTLS | JDTLS test/debug extensions |
+| C# / Razor | Roslyn | LSP | Neotest .NET for C#, netcoredbg |
 | Terraform / Puppet / SQL / Zig | terraformls / puppet / sqlls / zls | LSP where supported | — |
 | JSON / Jinja | jsonls / jinja_lsp | Prettier for JSON | — |
 
-The explicit LSP allowlist is in `lua/tooling.lua`. Installing another server
-with Mason does not automatically enable it. JDTLS, Roslyn and Rustaceanvim
-manage their own servers; external formatters run through Conform.
+Tool inventories live in `lua/tooling.lua`. Installing a server does not enable
+it automatically. JDTLS, Roslyn and Rustaceanvim manage their own servers.
+Tree-sitter also highlights languages without full LSP/debug support.
 
-Test runners and project dependencies are **project requirements**: install
-pytest, Jest or Vitest where needed; restore/build .NET projects; install the
-project's Rust toolchain. Rust tests do not require cargo-nextest. Use
-`:RustLsp testables` / `:RustLsp debuggables` for Rust's extended workflows.
-Python debugging selects an active virtualenv, then a nearby `.venv`/`venv`,
-then system Python. Node launch configurations need runnable JS/TS or a
-project-specific configuration with the right build output/source maps.
-For .NET, build first; the DLL prompt suggests a nearby Debug output. The
-local Mason recipe selects Samsung's native ARM macOS debugger, because the
-upstream registry still supplies an Intel build. Java
-uses `<leader>jt` for a method and `<leader>jT` for a class.
+Install test runners and dependencies in each project: pytest, Jest/Vitest,
+the Rust toolchain, or restored/built .NET projects. Rust uses `cargo test`;
+`:RustLsp testables` and `:RustLsp debuggables` offer extended workflows.
+Java uses `<leader>jt` for a method and `<leader>jT` for a class.
 
-Tree-sitter highlighting includes 40 languages. Highlighting alone does not
-imply LSP, tests or debugging support. C/C++ currently have no configured LSP
-and intentionally skip formatting.
+Python debugging selects the active virtualenv, a nearby `.venv`/`venv`, then
+system Python. Node debugging may need project launch settings for build
+output and source maps. Build .NET projects first; the DLL prompt suggests a
+nearby Debug output.
 
-## Editing and formatting policy
+## Editing and navigation
 
-Indentation defaults to two spaces, with vim-sleuth adapting to existing files
-and Neovim's EditorConfig support honouring project settings. Persistent undo
-is enabled. Swap files live under Neovim's state directory for crash recovery;
-a temporary backup protects writes, without leaving backup files in projects.
+Indentation defaults to two spaces, adapted by Sleuth and EditorConfig.
+Persistent undo is enabled. Swap files live in Neovim's state directory;
+temporary write backups protect saves without retaining backups in projects.
 
-Web files default to Prettier. The nearest explicit Prettier or oxfmt config
-chooses the formatter, stopping at the Git root. Prettier wins if both exist
-in the same directory; merely having oxfmt installed does not opt a project
-in. `package.json`'s `prettier` field also counts. This policy covers JS/TS,
-Vue, CSS, HTML, JSON, Markdown, YAML and the other web formats listed in
-`lua/formatting.lua`. Web formatting never falls back to a competing LSP.
+Space is leader. WhichKey shows leader and navigation groups, window commands,
+marks, registers and spelling suggestions; `<leader>?` shows buffer mappings.
+Visual/operator hints wait for another key. Pause after `d`/`y`, then press
+`i`/`a` for text-object hints. Fast text objects go directly to MiniAi.
+Custom function, class and function-call hints live beside WhichKey's settings.
 
-- `:WebFormatter prettier`, `:WebFormatter oxfmt`, `:WebFormatter auto`:
-  choose/reset the current buffer's formatter.
-- `<leader>f`: format manually.
-- `<leader>tF`: toggle this buffer's format-on-save.
-- `:FormatDisable`: disable format-on-save globally; `:FormatDisable!`:
-  current buffer only. `:FormatEnable`: clear global and current-buffer flags.
+Set floating borders with `winborder` in `init.lua`. Lazy, WhichKey, Noice,
+Neo-tree and DAP UI use it; Telescope requires its own border glyphs.
 
-## Navigation and UI
+Search uses `<leader>s`, code `<leader>c`, debugging `<leader>d`, Git hunks
+`<leader>h`, and tests/toggles `<leader>t`. `<C-p>` finds files, `<leader>l`
+runs live grep, `<leader>n` reveals the file tree, `<leader>q` lists diagnostics,
+and `<leader>th` toggles buffer inlay hints. Mini sessions save per directory;
+`<leader>sl` loads the current directory's session and `<leader>sL` the latest.
 
-Space is leader. Hold Space for the WhichKey guide; group names, text-object
-descriptions and timing live in `lua/keymap_policy.lua`.
+Web files default to Prettier. The nearest explicit Prettier/oxfmt config wins,
+stopping at the Git root; Prettier wins ties. A `package.json` Prettier field
+counts, while an installed oxfmt binary alone does not. Web files never fall
+back to LSP formatting. C/C++ skip formatting. Settings and selection logic
+live together in `lua/plugins/conform.lua`.
 
-The guide uses compact columns across the bottom of the editor, with no extra
-vertical padding or help footer. Column widths are capped so long descriptions
-cannot force a single scrolling column; long labels are shortened with an
-ellipsis. At 120 columns wide, the main menus typically fit in 4–7 rows.
-Press Escape to close the guide or Backspace to return to its parent menu.
+- `<leader>f`: format manually; `<leader>tF`: toggle buffer format-on-save.
+- `:WebFormatter prettier|oxfmt|auto`: select/reset the buffer's web formatter.
+- `:FormatDisable`: disable globally; `:FormatDisable!`: disable this buffer.
+- `:FormatEnable`: clear global and current-buffer disable flags.
 
-| Keys | Guide |
-|---|---|
-| Space | Leader actions in normal and visual mode |
-| `g`, `z`, `[`, `]` | Navigation, folds and other prefixed commands |
-| `Ctrl-w` | Window commands in normal mode |
-| `<leader>?` | Current-buffer mappings, including LSP and plugin-local actions |
-| `'`, backtick | Marks |
-| `"`, `Ctrl-r` in insert/command mode | Registers |
-| `z=` | Spelling suggestions |
+## Updates and rollback
 
-Visual and operator-pending help is deferred until another key is pressed.
-For text-object hints, pause after `d` or `y`, then press `i` or `a`; the guide
-includes Mini's arguments, quotes, function definitions, classes, function
-calls and next/previous variants. MiniAi reads the object key itself when the
-prefix is typed quickly, so typing `di` quickly and then pausing does not open
-this guide. Complete fast sequences such as `diw` keep their normal behaviour.
-The existing `gr` references mapping remains immediate, including after
-opening the `g` menu.
+Use `:Lazy update` deliberately and review `lazy-lock.json`. Run
+`./provision.sh` to align parsers, check formatting, then exercise the languages
+you use before committing. To undo an update, revert it and provision again.
+`:Lazy restore` alone does not align parsers.
 
-Search lives under `<leader>s`, code actions under `<leader>c`, debugging under
-`<leader>d` and tests/toggles under `<leader>t`. `<leader>q` fills the diagnostic
-location list. `<leader>th` toggles inlay hints for the current buffer.
+The lockfile pins plugins; parser revisions follow nvim-treesitter. Most Mason
+tools and registries are unpinned and are updated through `:Mason`. netcoredbg
+uses a local recipe for native Apple Silicon support and pins 3.2.0-1092
+(3.1.3-1062 on Intel macOS). Provisioning migrates existing installs. Remove
+that workaround once the upstream package supplies the required native builds.
+Roll back other Mason tools separately when needed.
 
-`./check.sh` tests the guide in a child Neovim with an attached UI: real prefix
-input, popup contents, buffer filtering, deferred hints and key dispatch. It
-also checks that menus use multiple columns and fit without scrolling at
-80, 120 and 200 columns, with the cursor at the top and bottom of the viewport.
-It uses Neovim's own RPC client and requires no additional test dependencies.
-
-Noice handles messages/command input, Telescope handles selection, and the
-shared border policy lives in `lua/ui.lua`. Mini provides the statusline,
-sessions and small editing helpers. Catppuccin uses the Mocha palette.
-
-## Updating and rolling back
-
-1. Start with a clean worktree. Use `:Lazy update` when intentionally updating
-   plugins; review the lockfile diff.
-2. Run `./provision.sh` to align parsers with the pinned Tree-sitter plugin.
-3. Run `./check.sh` and `~/.local/share/nvim/mason/bin/stylua --check .`.
-4. Exercise the languages you use, then commit the lockfile and config together.
-
-`lazy-lock.json` pins plugins. Parser revisions come from the pinned
-nvim-treesitter plugin. Most Mason tools and their registries are **not pinned**;
-`provision.sh` installs missing tools, and `:Mason` handles deliberate updates.
-The exception is netcoredbg: `tooling.netcoredbg_version` and the small local
-registry pin 3.2.0-1092 (3.1.3-1062 on Intel macOS, which has no 3.2 release).
-Provisioning migrates an existing install to that version. Remove the local
-recipe when Mason's upstream package supports the required native builds.
-This is not a fully reproducible toolchain lock.
-
-To undo a bad committed update, revert that commit and run `./provision.sh`
-again. `:Lazy restore` alone restores plugin versions but does not guarantee
-installed parsers match them. Roll back a Mason tool separately if needed.
-In the parent dotfiles repo, commit the new Neovim submodule pointer after
-pushing this repo.
-
-See [AGENTS.md](AGENTS.md) for contribution conventions and
-[CONFIG_CENTRALISATION.md](CONFIG_CENTRALISATION.md) for module ownership.
+In the parent dotfiles repo, commit the Neovim submodule pointer after pushing
+this repo. See [AGENTS.md](AGENTS.md) for editing conventions.

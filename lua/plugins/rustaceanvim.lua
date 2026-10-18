@@ -7,7 +7,7 @@ return {
   init = function()
     vim.g.rustaceanvim = function()
       return {
-        server = { capabilities = require('lsp').capabilities() },
+        server = { capabilities = require('blink.cmp').get_lsp_capabilities() },
         dap = { adapter = require('dap').adapters.codelldb },
       }
     end
