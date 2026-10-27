@@ -30,22 +30,6 @@ return {
     'vue-language-server',
     'zls',
   },
-  -- Specialised plugins own Java, C# and Rust. Formatters run via Conform.
-  lsp = {
-    'eslint',
-    'gopls',
-    'jinja_lsp',
-    'jsonls',
-    'lua_ls',
-    'puppet',
-    'pyright',
-    'ruff',
-    'sqlls',
-    'terraformls',
-    'ts_ls',
-    'vue_ls',
-    'zls',
-  },
   treesitter = {
     'bash',
     'c',

@@ -48,8 +48,9 @@ help with troubleshooting.
 | Terraform / Puppet / SQL / Zig | terraformls / puppet / sqlls / zls | LSP where supported | — |
 | JSON / Jinja | jsonls / jinja_lsp | Prettier for JSON | — |
 
-Tool inventories live in `lua/tooling.lua`. Installing a server does not enable
-it automatically. JDTLS, Roslyn and Rustaceanvim manage their own servers.
+Tool inventories live in `lua/tooling.lua`. Supported servers installed through
+Mason are enabled automatically. JDTLS, Roslyn and Rustaceanvim manage their own
+servers and are excluded from automatic activation in `lua/plugins/lspconfig.lua`.
 Tree-sitter also highlights languages without full LSP/debug support.
 
 Install test runners and dependencies in each project: pytest, Jest/Vitest,

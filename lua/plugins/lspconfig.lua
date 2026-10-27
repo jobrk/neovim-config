@@ -115,9 +115,8 @@ return {
     }
 
     require('mason-lspconfig').setup {
-      -- Installation is separate from activation. JDTLS, Roslyn and
-      -- Rustaceanvim own their specialised language-server lifecycles.
-      automatic_enable = tooling.lsp,
+      -- These plugins own their specialised language-server lifecycles.
+      automatic_enable = { exclude = { 'jdtls', 'roslyn', 'rust_analyzer' } },
     }
   end,
 }

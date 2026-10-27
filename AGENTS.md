@@ -7,7 +7,7 @@ Personal Lua configuration based on kickstart.nvim, using lazy.nvim.
 - `init.lua`: editor options, general mappings, autocommands and lazy.nvim bootstrap.
 - `lua/plugins/`: one lazy.nvim table spec per plugin. Keep its settings, mappings and helpers together.
 - `after/lsp/`: native server overrides merged after plugin-provided defaults.
-- `lua/tooling.lua`: shared Mason packages, LSP allowlist and parser inventory.
+- `lua/tooling.lua`: shared Mason packages and parser inventory.
 - Other flat `lua/` modules are for substantial implementations or real shared consumers, such as the statusline and parser installation.
 - Prefer a small amount of repetition over tiny wrapper modules or custom configuration schemas. Do not add `lua/config/` or `lua/core/` hierarchies.
 
@@ -28,7 +28,7 @@ Personal Lua configuration based on kickstart.nvim, using lazy.nvim.
 - Use Neovim's global options where plugins support them. Keep border style in `init.lua` via `winborder`; Telescope's Plenary borders require explicit glyphs. Avoid restating plugin defaults.
 - WhichKey settings and custom MiniAi hints live in `plugins/which_key.lua`; custom objects live in `plugins/mini.lua`. Preserve immediate `gr` dispatch and fast text objects.
 - Two-space fallback indentation, adapted by Sleuth and EditorConfig. Persistent undo, state-directory swap files and temporary write backups; no retained project backups.
-- Mason installs tools; `tooling.lsp` explicitly enables ordinary servers. JDTLS, Roslyn and Rustaceanvim own Java, C# and Rust. Java setup runs for every Java buffer with a workspace per project.
+- Mason installs tools; mason-lspconfig automatically enables supported installed servers. Its exclusion list in `plugins/lspconfig.lua` leaves JDTLS, Roslyn and Rustaceanvim to own Java, C# and Rust. Java setup runs for every Java buffer with a workspace per project.
 - Conform owns formatting. Web files use the nearest explicit Prettier/oxfmt config, Prettier wins ties, and web files never use LSP fallback. Python runs Ruff imports then formatting; Go uses goimports; Lua uses StyLua. C/C++ skip formatting.
 - The local netcoredbg registry supports native Apple Silicon builds and pins its version through `tooling.lua`.
 
