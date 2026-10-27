@@ -7,7 +7,7 @@ Blink, Telescope, Conform, Neotest and nvim-dap.
 ## Setup
 
 Requires Neovim 0.12+, git, ripgrep, make, a C compiler, curl, tar, unzip and
-Tree-sitter CLI 0.27+. Installing the full Mason inventory also needs Node.js
+Tree-sitter CLI 0.26.1+. Installing the full Mason inventory also needs Node.js
 24 LTS/npm, Python 3 with venv, Go, Rust/Cargo, the .NET SDK and JDK 21+.
 Install system runtimes through your machine provisioning. Use a Nerd Font,
 or set `vim.g.have_nerd_font = false` in `init.lua`.
@@ -110,3 +110,8 @@ Roll back other Mason tools separately when needed.
 
 In the parent dotfiles repo, commit the Neovim submodule pointer after pushing
 this repo. See [AGENTS.md](AGENTS.md) for editing conventions.
+
+## License
+
+[MIT](LICENSE). Based on [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim),
+which is also MIT-licensed. Installed plugins and tools retain their own licenses.
